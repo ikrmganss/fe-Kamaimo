@@ -65,6 +65,7 @@ class _FloatingBottomNav extends StatelessWidget {
             filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
             child: Container(
               height: 70,
+              clipBehavior: Clip.hardEdge,
               decoration: BoxDecoration(
                 color: Colors.white.withOpacity(0.8),
                 borderRadius: BorderRadius.circular(9999),
@@ -292,12 +293,12 @@ class _NavBarDelegate extends SliverPersistentHeaderDelegate {
                       ),
                     ],
                   ),
-                  padding: const EdgeInsets.all(8),
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       _LangPill(label: 'ID', active: locale == 'ID'),
-                      const SizedBox(width: 4),
+                      const SizedBox(width: 8),
                       _LangPill(label: 'EN', active: locale == 'EN'),
                     ],
                   ),
@@ -323,7 +324,7 @@ class _LangPill extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
       decoration: BoxDecoration(
         color: active ? AppColors.pine800 : Colors.transparent,
         borderRadius: BorderRadius.circular(9999),
