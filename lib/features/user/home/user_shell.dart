@@ -350,8 +350,10 @@ class _HeroSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final topPadding = MediaQuery.of(context).viewPadding.top;
+    final heroTopPadding = topPadding > 0 ? topPadding + 8.0 : 17.0;
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 17, 16, 0),
+      padding: EdgeInsets.fromLTRB(16, heroTopPadding, 16, 0),
       child: Container(
         decoration: BoxDecoration(
           gradient: const LinearGradient(
