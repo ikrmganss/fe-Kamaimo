@@ -144,7 +144,6 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final ScrollController _scroll = ScrollController();
-  String _locale = 'ID'; // M1-1.6 language switcher state
 
   @override
   void dispose() {
@@ -161,24 +160,17 @@ class _HomeScreenState extends State<HomeScreen> {
           CustomScrollView(
             controller: _scroll,
             slivers: [
-              // NavBar sticky (M1-1.2)
+              // Header Sticky Bar
               SliverPersistentHeader(
                 pinned: true,
-                delegate: _NavBarDelegate(
-                  locale: _locale,
-                  onToggleLocale: () {
-                    setState(() => _locale = _locale == 'ID' ? 'EN' : 'ID');
-                  },
-                ),
+                delegate: _NavBarDelegate(),
               ),
               SliverToBoxAdapter(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // 7.2 Hero + Search (M1-1.4)
-                    _HeroSection(locale: _locale),
-                    // Quick Pill Filters
-                    _QuickFilters(),
+                    // Greeting + Weather + Headline + Category Pills + Search
+                    const _HeroSection(),
                     // 7.3 Peta Interaktif (M1-2)
                     _PetaSection(),
                     // 7.4 Carousel Wisata Unggulan (M1-2.6)
@@ -203,10 +195,7 @@ class _HomeScreenState extends State<HomeScreen> {
 // ─── Nav Bar Delegate (sticky) ────────────────────────────────────────────────
 
 class _NavBarDelegate extends SliverPersistentHeaderDelegate {
-  final String locale;
-  final VoidCallback onToggleLocale;
-
-  const _NavBarDelegate({required this.locale, required this.onToggleLocale});
+  const _NavBarDelegate();
 
   @override
   double get minExtent => 64;
@@ -226,35 +215,35 @@ class _NavBarDelegate extends SliverPersistentHeaderDelegate {
       child: SafeArea(
         bottom: false,
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
+          padding: const EdgeInsets.symmetric(horizontal: 20),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              // Logo BERANI KAMAIMO
+              // Logo + Text "Berani Kamaimo" + "SULAWESI TENGAH"
               Row(
                 children: [
                   Container(
-                    width: 26,
-                    height: 26,
+                    width: 32,
+                    height: 32,
                     decoration: BoxDecoration(
                       color: AppColors.pine600,
-                      borderRadius: BorderRadius.circular(5.65),
+                      borderRadius: BorderRadius.circular(8),
                     ),
                     child: const Icon(
                       Icons.landscape_rounded,
                       color: Colors.white,
-                      size: 16,
+                      size: 18,
                     ),
                   ),
-                  const SizedBox(width: 8),
+                  const SizedBox(width: 10),
                   Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'BERANI',
+                        'BERANI KAMAIMO',
                         style: TextStyle(
-                          fontSize: 8,
+                          fontSize: 12,
                           fontWeight: FontWeight.w900,
                           color: AppColors.pine900,
                           letterSpacing: 0.5,
@@ -262,10 +251,10 @@ class _NavBarDelegate extends SliverPersistentHeaderDelegate {
                         ),
                       ),
                       Text(
-                        'KAMAIMO',
+                        'SULAWESI TENGAH',
                         style: TextStyle(
                           fontSize: 7,
-                          fontWeight: FontWeight.w900,
+                          fontWeight: FontWeight.w600,
                           color: AppColors.pine500,
                           letterSpacing: 0.5,
                           height: 1.2,
@@ -275,34 +264,50 @@ class _NavBarDelegate extends SliverPersistentHeaderDelegate {
                   ),
                 ],
               ),
-              // Language Pill Switcher (M1-1.6)
-              GestureDetector(
-                onTap: onToggleLocale,
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.9),
-                    borderRadius: BorderRadius.circular(9999),
-                    border: Border.all(
-                      color: AppColors.border.withOpacity(0.6),
-                    ),
-                    boxShadow: const [
-                      BoxShadow(
-                        color: Color(0x0D000000),
-                        blurRadius: 2,
-                        offset: Offset(0, 1),
+              // Right side: Notifikasi icon + Avatar
+              Row(
+                children: [
+                  // Notifikasi icon
+                  GestureDetector(
+                    onTap: () {
+                      // TODO: Buka halaman Notifikasi
+                    },
+                    child: Container(
+                      width: 36,
+                      height: 36,
+                      decoration: BoxDecoration(
+                        color: AppColors.surfaceVariant,
+                        borderRadius: BorderRadius.circular(10),
                       ),
-                    ],
+                      child: const Icon(
+                        Icons.notifications_none_rounded,
+                        color: AppColors.pine700,
+                        size: 20,
+                      ),
+                    ),
                   ),
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      _LangPill(label: 'ID', active: locale == 'ID'),
-                      const SizedBox(width: 8),
-                      _LangPill(label: 'EN', active: locale == 'EN'),
-                    ],
+                  const SizedBox(width: 8),
+                  // Avatar
+                  GestureDetector(
+                    onTap: () {
+                      // TODO: Buka halaman Profil
+                    },
+                    child: Container(
+                      width: 36,
+                      height: 36,
+                      decoration: BoxDecoration(
+                        color: AppColors.pine500.withOpacity(0.2),
+                        borderRadius: BorderRadius.circular(18),
+                        border: Border.all(color: AppColors.border),
+                      ),
+                      child: const Icon(
+                        Icons.person_rounded,
+                        color: AppColors.pine700,
+                        size: 20,
+                      ),
+                    ),
                   ),
-                ),
+                ],
               ),
             ],
           ),
@@ -312,8 +317,7 @@ class _NavBarDelegate extends SliverPersistentHeaderDelegate {
   }
 
   @override
-  bool shouldRebuild(_NavBarDelegate old) =>
-      old.locale != locale;
+  bool shouldRebuild(_NavBarDelegate old) => false;
 }
 
 class _LangPill extends StatelessWidget {
@@ -342,141 +346,184 @@ class _LangPill extends StatelessWidget {
   }
 }
 
+// ─── Greeting & Weather Section ───────────────────────────────────────────────
+
+class _GreetingWeatherSection extends StatelessWidget {
+  const _GreetingWeatherSection();
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          // Avatar (traveler) + Greeting
+          Row(
+            children: [
+              Container(
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(
+                  color: AppColors.pine200 ?? AppColors.pine500.withOpacity(0.2),
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(color: AppColors.border),
+                ),
+                child: const Icon(
+                  Icons.person_outline_rounded,
+                  color: AppColors.pine700,
+                  size: 22,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Halo, Penjelajah',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.pine900,
+                      height: 1.3,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    'Kamaimo Sulteng',
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w400,
+                      color: AppColors.textSecondary,
+                      height: 1.5,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+          // Weather badge
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            decoration: BoxDecoration(
+              color: AppColors.emerald50,
+              borderRadius: BorderRadius.circular(9999),
+              border: Border.all(color: AppColors.emerald100),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(Icons.wb_sunny_rounded, color: Color(0xFFF59E0B), size: 14),
+                const SizedBox(width: 4),
+                Text(
+                  '28°C Cerah',
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.emerald600,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 // ─── Hero Section ─────────────────────────────────────────────────────────────
 
 class _HeroSection extends StatelessWidget {
-  final String locale;
-  const _HeroSection({required this.locale});
+  const _HeroSection();
 
   @override
   Widget build(BuildContext context) {
     final topPadding = MediaQuery.of(context).viewPadding.top;
     final heroTopPadding = topPadding > 0 ? topPadding + 8.0 : 17.0;
     return Padding(
-      padding: EdgeInsets.fromLTRB(16, heroTopPadding, 16, 0),
-      child: Container(
-        decoration: BoxDecoration(
-          gradient: const LinearGradient(
-            colors: [Color(0xB2ECFDF5), Color(0xFFF2F4EE), Colors.white],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            stops: [0.0, 0.5, 1.0],
-          ),
-          borderRadius: BorderRadius.circular(28),
-          border: Border.all(color: AppColors.border.withOpacity(0.7)),
-          boxShadow: const [
-            BoxShadow(
-              color: Color(0x122E5C43),
-              blurRadius: 24,
-              offset: Offset(0, 8),
-              spreadRadius: -4,
+      padding: EdgeInsets.fromLTRB(0, heroTopPadding, 0, 0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Greeting + Weather
+          _GreetingWeatherSection(),
+          const SizedBox(height: 24),
+          // Headline
+          Text(
+            'Mau jelajah ke mana hari ini?',
+            style: TextStyle(
+              fontSize: 28,
+              fontWeight: FontWeight.w700,
+              color: AppColors.pine900,
+              height: 1.25,
+              letterSpacing: -0.5,
             ),
-          ],
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(21),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Heading
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        RichText(
-                          text: const TextSpan(
-                            style: TextStyle(
-                              fontSize: 26,
-                              fontWeight: FontWeight.w800,
-                              color: AppColors.pine900,
-                              letterSpacing: -0.65,
-                              height: 1.25,
-                            ),
-                            children: [
-                              TextSpan(text: 'Jelajahi Surga\nTersembunyi di \n'),
-                              TextSpan(
-                                text: 'Jantung Sulawesi',
-                                style: TextStyle(color: AppColors.pine700),
-                              ),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        const Text(
-                          'Temukan pesona bahari kristal, labirin karst megah, '
-                          'dan keagungan peradaban megalitikum tertua di Nusantara.',
-                          style: TextStyle(
-                            fontSize: 13,
-                            fontWeight: FontWeight.w500,
-                            color: AppColors.textSecondary,
-                            height: 1.62,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  // Weather Card
-                  _WeatherCard(),
-                ],
-              ),
-              const SizedBox(height: 16),
-              // Search Bar (kandidat A — secret admin code masuk sini, M1-1.5)
-              _SearchBar(),
-            ],
           ),
-        ),
+          const SizedBox(height: 20),
+          // Category Pills
+          _CategoryPills(),
+          const SizedBox(height: 20),
+          // Search Bar
+          _SearchBar(),
+        ],
       ),
     );
   }
 }
 
-class _WeatherCard extends StatelessWidget {
+// ─── Category Pills ────────────────────────────────────────────────────────────
+
+class _CategoryPills extends StatefulWidget {
+  @override
+  State<_CategoryPills> createState() => _CategoryPillsState();
+}
+
+class _CategoryPillsState extends State<_CategoryPills> {
+  int _selected = 0;
+  static const _categories = [
+    'Semua',
+    'Bahari & Karst',
+    'Megalitikum',
+    'Budaya & Adat',
+    'Kuliner Khas',
+  ];
+
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 96,
-      height: 81,
-      decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.9),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.emerald100.withOpacity(0.8)),
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: const [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(Icons.wb_sunny_rounded, color: Color(0xFFF59E0B), size: 18),
-              SizedBox(width: 4),
-              Text(
-                '29°C',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w800,
-                  color: Color(0xFF0F172A),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: SizedBox(
+        height: 36,
+        child: ListView.separated(
+          scrollDirection: Axis.horizontal,
+          itemCount: _categories.length,
+          separatorBuilder: (_, __) => const SizedBox(width: 8),
+          itemBuilder: (ctx, i) {
+            final active = i == _selected;
+            return GestureDetector(
+              onTap: () => setState(() => _selected = i),
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                decoration: BoxDecoration(
+                  color: active ? AppColors.pine700 : Colors.white,
+                  borderRadius: BorderRadius.circular(9999),
+                  border: active ? null : Border.all(color: AppColors.border),
+                ),
+                alignment: Alignment.center,
+                child: Text(
+                  _categories[i],
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: active ? FontWeight.bold : FontWeight.w600,
+                    color: active ? Colors.white : AppColors.pine900,
+                    letterSpacing: 0.5,
+                  ),
                 ),
               ),
-            ],
-          ),
-          SizedBox(height: 4),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(Icons.location_on_rounded, size: 10, color: AppColors.emerald600),
-              SizedBox(width: 2),
-              Text('Palu', style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: AppColors.emerald600)),
-            ],
-          ),
-          Text(
-            'Cerah Berawan',
-            style: TextStyle(fontSize: 9, color: Color(0xFF64748B), fontWeight: FontWeight.w500),
-          ),
-        ],
+            );
+          },
+        ),
       ),
     );
   }
@@ -512,32 +559,55 @@ class _SearchBarState extends State<_SearchBar> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 46,
+      height: 52,
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(9999),
+        borderRadius: BorderRadius.circular(16),
         border: Border.all(color: AppColors.border),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.pine700.withOpacity(0.04),
+            blurRadius: 10,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Row(
         children: [
-          const SizedBox(width: 14),
-          const Icon(Icons.search_rounded, color: AppColors.textTertiary, size: 18),
-          const SizedBox(width: 8),
+          const SizedBox(width: 16),
+          const Icon(Icons.search_rounded, color: AppColors.textTertiary, size: 20),
+          const SizedBox(width: 10),
           Expanded(
             child: TextField(
               controller: _ctrl,
               onSubmitted: _onSubmit,
-              style: const TextStyle(fontSize: 11, color: AppColors.textPrimary),
+              style: const TextStyle(fontSize: 14, color: AppColors.textPrimary),
               decoration: const InputDecoration(
                 border: InputBorder.none,
-                hintText: 'Cari destinasi atau kabupaten...',
-                hintStyle: TextStyle(fontSize: 11, color: AppColors.textTertiary),
+                hintText: 'Cari Danau Paisu Pok, Sombori...',
+                hintStyle: TextStyle(fontSize: 14, color: AppColors.textTertiary),
                 isDense: true,
                 contentPadding: EdgeInsets.zero,
               ),
             ),
           ),
-          const SizedBox(width: 8),
+          // Filter icon
+          Container(
+            width: 44,
+            height: 44,
+            margin: const EdgeInsets.only(right: 4),
+            decoration: BoxDecoration(
+              color: AppColors.surfaceVariant,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: AppColors.border),
+            ),
+            child: Icon(
+              Icons.tune_rounded,
+              color: AppColors.pine700,
+              size: 22,
+            ),
+          ),
+          const SizedBox(width: 4),
         ],
       ),
     );
@@ -553,7 +623,13 @@ class _QuickFilters extends StatefulWidget {
 
 class _QuickFiltersState extends State<_QuickFilters> {
   int _selected = 0;
-  static const _filters = ['Semua', 'Bahari & Karst', 'Megalitikum', 'Danau & Air Terjun'];
+  static const _filters = [
+    'Semua',
+    'Bahari & Karst',
+    'Megalitikum',
+    'Budaya & Adat',
+    'Kuliner Khas',
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -585,9 +661,9 @@ class _QuickFiltersState extends State<_QuickFilters> {
                     color: active ? Colors.white : AppColors.pine900,
                   ),
                 ),
-              ),
-            );
-          },
+              );
+            },
+          ),
         ),
       ),
     );
@@ -1496,7 +1572,7 @@ class _Footer extends StatelessWidget {
           ),
           const SizedBox(height: 4),
           const Text(
-            'Berani Kamaimo • Gerakan Wisata Berkelanjutan & Ekraf Sulteng',
+            'BBWI • Berani Kamaimo',
             textAlign: TextAlign.center,
             style: TextStyle(fontSize: 11, fontWeight: FontWeight.w500, color: AppColors.textSecondary),
           ),
