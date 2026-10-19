@@ -51,7 +51,7 @@ class _FloatingBottomNav extends StatelessWidget {
     (icon: Icons.map_rounded, label: 'Destinasi'),
     (icon: Icons.event_rounded, label: 'Event'),
     (icon: Icons.card_giftcard_rounded, label: 'Paket'),
-    (icon: Icons.explore_rounded, label: 'Eksplor'),
+    (icon: Icons.restaurant_menu_rounded, label: 'Kuliner'),
   ];
 
   @override
@@ -261,51 +261,6 @@ class _NavBarDelegate extends SliverPersistentHeaderDelegate {
                         ),
                       ),
                     ],
-                  ),
-                ],
-              ),
-              // Right side: Notifikasi icon + Avatar
-              Row(
-                children: [
-                  // Notifikasi icon
-                  GestureDetector(
-                    onTap: () {
-                      // TODO: Buka halaman Notifikasi
-                    },
-                    child: Container(
-                      width: 36,
-                      height: 36,
-                      decoration: BoxDecoration(
-                        color: AppColors.surfaceVariant,
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: const Icon(
-                        Icons.notifications_none_rounded,
-                        color: AppColors.pine700,
-                        size: 20,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  // Avatar
-                  GestureDetector(
-                    onTap: () {
-                      // TODO: Buka halaman Profil
-                    },
-                    child: Container(
-                      width: 36,
-                      height: 36,
-                      decoration: BoxDecoration(
-                        color: AppColors.pine500.withOpacity(0.2),
-                        borderRadius: BorderRadius.circular(18),
-                        border: Border.all(color: AppColors.border),
-                      ),
-                      child: const Icon(
-                        Icons.person_rounded,
-                        color: AppColors.pine700,
-                        size: 20,
-                      ),
-                    ),
                   ),
                 ],
               ),
