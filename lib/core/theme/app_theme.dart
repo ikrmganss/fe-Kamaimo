@@ -10,7 +10,7 @@ class AppTheme {
   static ThemeData get light => ThemeData(
         // Warna dasar
         scaffoldBackgroundColor: AppColors.background,
-        colorScheme: ColorScheme.light(
+        colorScheme: const ColorScheme.light(
           primary: AppColors.pine700,
           secondary: AppColors.emerald500,
           surface: AppColors.surface,
@@ -29,7 +29,7 @@ class AppTheme {
             backgroundColor: WidgetStateProperty.all(AppColors.pine700),
             foregroundColor: WidgetStateProperty.all(AppColors.textOnPrimary),
             padding: WidgetStateProperty.all(
-              EdgeInsets.symmetric(
+              const EdgeInsets.symmetric(
                 horizontal: AppSpacing.spacing16,
                 vertical: AppSpacing.spacing12,
               ),
@@ -47,7 +47,7 @@ class AppTheme {
             backgroundColor: WidgetStateProperty.all(AppColors.emerald500),
             foregroundColor: WidgetStateProperty.all(Colors.white),
             padding: WidgetStateProperty.all(
-              EdgeInsets.symmetric(
+              const EdgeInsets.symmetric(
                 horizontal: AppSpacing.spacing16,
                 vertical: AppSpacing.spacing12,
               ),
@@ -63,11 +63,11 @@ class AppTheme {
         outlinedButtonTheme: OutlinedButtonThemeData(
           style: ButtonStyle(
             side: WidgetStateProperty.all(
-              BorderSide(color: AppColors.pine700, width: 1.5),
+              const BorderSide(color: AppColors.pine700, width: 1.5),
             ),
             foregroundColor: WidgetStateProperty.all(AppColors.pine700),
             padding: WidgetStateProperty.all(
-              EdgeInsets.symmetric(
+              const EdgeInsets.symmetric(
                 horizontal: AppSpacing.spacing16,
                 vertical: AppSpacing.spacing12,
               ),
@@ -93,7 +93,7 @@ class AppTheme {
         inputDecorationTheme: InputDecorationTheme(
           filled: true,
           fillColor: AppColors.surface,
-          contentPadding: EdgeInsets.symmetric(
+          contentPadding: const EdgeInsets.symmetric(
             horizontal: AppSpacing.spacing16,
             vertical: AppSpacing.spacing12,
           ),
@@ -103,19 +103,19 @@ class AppTheme {
           ),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(AppSpacing.radius8),
-            borderSide: BorderSide(color: AppColors.border),
+            borderSide: const BorderSide(color: AppColors.border),
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(AppSpacing.radius8),
-            borderSide: BorderSide(color: AppColors.pine700, width: 2),
+            borderSide: const BorderSide(color: AppColors.pine700, width: 2),
           ),
           errorBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(AppSpacing.radius8),
-            borderSide: BorderSide(color: AppColors.error),
+            borderSide: const BorderSide(color: AppColors.error),
           ),
           focusedErrorBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(AppSpacing.radius8),
-            borderSide: BorderSide(color: AppColors.error, width: 2),
+            borderSide: const BorderSide(color: AppColors.error, width: 2),
           ),
           labelStyle: TextStyle(
             color: AppColors.textSecondary,
@@ -145,7 +145,7 @@ class AppTheme {
         ),
 
         // Divider
-        dividerTheme: DividerThemeData(
+        dividerTheme: const DividerThemeData(
           color: AppColors.divider,
           thickness: 1,
           space: AppSpacing.spacing16,

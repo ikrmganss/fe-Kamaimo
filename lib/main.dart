@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'core/config/env.dart';
 import 'core/network/api_client.dart';
 import 'core/network/token_store.dart';
 import 'core/theme/app_theme.dart';
@@ -27,11 +26,11 @@ class MyApp extends StatelessWidget {
           create: (_) => InMemoryTokenStore(),
         ),
         ProxyProvider<TokenStore, ApiClient>(
-          update: (_, tokenStore, __) =>
+          update: (_, tokenStore, _) =>
               ApiClient(tokenStore: tokenStore),
         ),
         ProxyProvider<ApiClient, KunjunganTurisRepository>(
-          update: (_, apiClient, __) =>
+          update: (_, apiClient, _) =>
               KunjunganTurisRepository(apiClient),
         ),
       ],

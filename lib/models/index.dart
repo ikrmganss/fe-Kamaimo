@@ -1,4 +1,5 @@
 /// Export semua model.
+library;
 export 'localized_text.dart';
 export 'desa_wisata.dart';
 export 'jarak_desa.dart';

@@ -35,7 +35,7 @@ class _DetailDesaScreenState extends State<DetailDesaScreen> {
             expandedHeight: 320,
             pinned: true,
             stretch: true,
-            backgroundColor: AppColors.pine500.withOpacity(0.2),
+            backgroundColor: AppColors.pine500.withValues(alpha: 0.2),
             flexibleSpace: FlexibleSpaceBar(
               stretchModes: const [
                 StretchMode.zoomBackground,
@@ -46,12 +46,12 @@ class _DetailDesaScreenState extends State<DetailDesaScreen> {
                 children: [
                   // Image placeholder
                   Container(
-                    color: AppColors.pine500.withOpacity(0.2),
+                    color: AppColors.pine500.withValues(alpha: 0.2),
                     child: widget.foto.isNotEmpty
                         ? Image.network(
                             widget.foto,
                             fit: BoxFit.cover,
-                            errorBuilder: (_, __, ___) => const Center(
+                            errorBuilder: (_, _, _) => const Center(
                               child: Icon(
                                 Icons.landscape,
                                 size: 64,
@@ -75,7 +75,7 @@ class _DetailDesaScreenState extends State<DetailDesaScreen> {
                         end: Alignment.bottomCenter,
                         colors: [
                           Colors.transparent,
-                          Colors.black.withOpacity(0.7),
+                          Colors.black.withValues(alpha: 0.7),
                         ],
                       ),
                     ),
@@ -93,7 +93,7 @@ class _DetailDesaScreenState extends State<DetailDesaScreen> {
                           width: 40,
                           height: 40,
                           decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.2),
+                            color: Colors.white.withValues(alpha: 0.2),
                             shape: BoxShape.circle,
                           ),
                           child: IconButton(
@@ -113,7 +113,7 @@ class _DetailDesaScreenState extends State<DetailDesaScreen> {
                             width: 40,
                             height: 40,
                             decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.2),
+                              color: Colors.white.withValues(alpha: 0.2),
                               shape: BoxShape.circle,
                             ),
                             child: Icon(
@@ -227,18 +227,18 @@ class _DetailDesaScreenState extends State<DetailDesaScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // Info chips row
-                  Row(
+                  const Row(
                     children: [
                       _InfoChip(
                         icon: Icons.access_time_rounded,
                         label: 'Buka 08:00 - 17:00',
                       ),
-                      const SizedBox(width: 12),
+                      SizedBox(width: 12),
                       _InfoChip(
                         icon: Icons.directions_walk_rounded,
                         label: '2.4 km dari sini',
                       ),
-                      const SizedBox(width: 12),
+                      SizedBox(width: 12),
                       _InfoChip(
                         icon: Icons.local_parking_rounded,
                         label: 'Parkir luas',
@@ -287,7 +287,7 @@ class _DetailDesaScreenState extends State<DetailDesaScreen> {
                     ),
                   ),
                   const SizedBox(height: 12),
-                  Wrap(
+                  const Wrap(
                     spacing: 12,
                     runSpacing: 12,
                     children: [
@@ -337,19 +337,19 @@ class _DetailDesaScreenState extends State<DetailDesaScreen> {
                       borderRadius: BorderRadius.circular(16),
                       border: Border.all(color: AppColors.border),
                     ),
-                    child: Column(
+                    child: const Column(
                       children: [
                         _PriceRow(label: 'Dewasa (WNI)', price: 'Rp 15.000'),
-                        const Divider(height: 16, color: AppColors.borderLight),
+                        Divider(height: 16, color: AppColors.borderLight),
                         _PriceRow(label: 'Anak-anak (WNI)', price: 'Rp 7.500'),
-                        const Divider(height: 16, color: AppColors.borderLight),
+                        Divider(height: 16, color: AppColors.borderLight),
                         _PriceRow(
                           label: 'Wisatawan Mancanegara',
                           price: 'Rp 50.000',
                         ),
-                        const Divider(height: 16, color: AppColors.borderLight),
+                        Divider(height: 16, color: AppColors.borderLight),
                         _PriceRow(label: 'Parkir Motor', price: 'Rp 5.000'),
-                        const Divider(height: 16, color: AppColors.borderLight),
+                        Divider(height: 16, color: AppColors.borderLight),
                         _PriceRow(label: 'Parkir Mobil', price: 'Rp 10.000'),
                       ],
                     ),
@@ -372,11 +372,11 @@ class _DetailDesaScreenState extends State<DetailDesaScreen> {
                     child: ListView.separated(
                       scrollDirection: Axis.horizontal,
                       itemCount: 4,
-                      separatorBuilder: (_, __) => const SizedBox(width: 12),
+                      separatorBuilder: (_, _) => const SizedBox(width: 12),
                       itemBuilder: (ctx, i) => Container(
                         width: 160,
                         decoration: BoxDecoration(
-                          color: AppColors.pine500.withOpacity(0.15),
+                          color: AppColors.pine500.withValues(alpha: 0.15),
                           borderRadius: BorderRadius.circular(16),
                           border: Border.all(color: AppColors.border),
                         ),
