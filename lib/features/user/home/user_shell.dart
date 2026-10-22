@@ -69,10 +69,10 @@ class _FloatingBottomNav extends StatelessWidget {
               height: 70,
               clipBehavior: Clip.hardEdge,
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.8),
+                color: Colors.white.withValues(alpha: 0.8),
                 borderRadius: BorderRadius.circular(9999),
                 border: Border.all(
-                  color: Colors.white.withOpacity(0.3),
+                  color: Colors.white.withValues(alpha: 0.3),
                   width: 1.5,
                 ),
                 boxShadow: const [
@@ -173,18 +173,16 @@ class _HomeScreenState extends State<HomeScreen> {
                 const _GreetingWeatherSection(),
                 const SizedBox(height: 24),
                 // 2. Headline
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 20),
                   child: Text(
                     'Mau jelajah ke mana hari ini?',
                     style: TextStyle(
-                      fontFamily: 'Poppins',
                       fontSize: 28,
                       fontWeight: FontWeight.w700,
                       color: AppColors.pine900,
                       height: 1.25,
                       letterSpacing: -0.5,
-                      fontStyle: FontStyle.italic,
                     ),
                   ),
                 ),
@@ -195,25 +193,28 @@ class _HomeScreenState extends State<HomeScreen> {
                 // 4. Search Bar
                 _SearchBar(),
                 const SizedBox(height: 24),
-                // 5. Hero Section (Full Screen style per Figma)
-                const _HeroFullScreenSection(),
+                // 5. Hero Card: Danau Paisu Pok
+                const _HeroCardPaisuPok(),
                 const SizedBox(height: 24),
                 // 6. Destinasi Ikonik (Horizontal Scroll)
-                _DestinasiIkonikSection(),
+                const _DestinasiIkonikSection(),
                 const SizedBox(height: 24),
                 // 7. Event Promo Card
-                _EventPromoCard(),
+                const _EventPromoCard(),
                 const SizedBox(height: 24),
                 // 8. Quick Access Menu: Peta Desa Wisata
-                _QuickAccessMap(),
+                const _QuickAccessMap(),
                 const SizedBox(height: 24),
-                // 9. Testimoni
-                _TestimoniSection(),
+                // 9. Statistik Wisman
+                const _StatistikWisman(),
                 const SizedBox(height: 24),
-                // 10. Concierge WhatsApp Banner
-                _ConciergeWABanner(),
+                // 10. Testimoni
+                const _TestimoniSection(),
                 const SizedBox(height: 24),
-                // 11. Footer
+                // 11. Concierge WhatsApp Banner
+                const _ConciergeWABanner(),
+                const SizedBox(height: 24),
+                // 12. Footer
                 _Footer(),
                 // extra padding bawah untuk floating nav
                 const SizedBox(height: 100),
@@ -243,10 +244,10 @@ class _NavBarDelegate extends SliverPersistentHeaderDelegate {
     return Container(
       height: 64,
       decoration: BoxDecoration(
-        color: isBlurred ? Colors.white.withOpacity(0.8) : AppColors.surface,
+        color: isBlurred ? Colors.white.withValues(alpha: 0.8) : AppColors.surface,
         border: Border(
           bottom: BorderSide(
-            color: isBlurred ? Colors.white.withOpacity(0.3) : AppColors.border,
+            color: isBlurred ? Colors.white.withValues(alpha: 0.3) : AppColors.border,
             width: 1.5,
           ),
         ),
@@ -262,42 +263,40 @@ class _NavBarDelegate extends SliverPersistentHeaderDelegate {
               Row(
                 children: [
                   Container(
-                    width: 36,
-                    height: 36,
+                    width: 32,
+                    height: 32,
                     decoration: BoxDecoration(
-                      color: AppColors.pine900,
-                      borderRadius: BorderRadius.circular(10),
+                      color: AppColors.pine600,
+                      borderRadius: BorderRadius.circular(8),
                     ),
                     child: const Icon(
                       Icons.landscape_rounded,
                       color: Colors.white,
-                      size: 20,
+                      size: 18,
                     ),
                   ),
                   const SizedBox(width: 10),
-                  Column(
+                  const Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    children: const [
+                    children: [
                       Text(
                         'BERANI KAMAIMO',
                         style: TextStyle(
-                          fontFamily: 'Poppins',
                           fontSize: 12,
                           fontWeight: FontWeight.w900,
                           color: AppColors.pine900,
-                          letterSpacing: 0.8,
+                          letterSpacing: 0.5,
                           height: 1.2,
                         ),
                       ),
                       Text(
                         'SULAWESI TENGAH',
                         style: TextStyle(
-                          fontFamily: 'Poppins',
                           fontSize: 7,
                           fontWeight: FontWeight.w600,
                           color: AppColors.pine500,
-                          letterSpacing: 1.0,
+                          letterSpacing: 0.5,
                           height: 1.2,
                         ),
                       ),
@@ -305,7 +304,7 @@ class _NavBarDelegate extends SliverPersistentHeaderDelegate {
                   ),
                 ],
               ),
-              // Language pill (ID/EN) - match Figma
+              // Language pill (ID/EN)
               const _LangPill(label: 'ID', active: false),
             ],
           ),
@@ -334,10 +333,10 @@ class _LangPill extends StatelessWidget {
       child: Text(
         label,
         style: TextStyle(
-          fontFamily: 'Poppins',
           fontSize: 12,
           fontWeight: FontWeight.bold,
           color: active ? Colors.white : AppColors.textMuted,
+          fontFamily: 'PlusJakartaSans',
         ),
       ),
     );
@@ -357,13 +356,12 @@ class _GreetingWeatherSection extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           // Greeting
-          Column(
+          const Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: const [
+            children: [
               Text(
                 'Halo, Penjelajah',
                 style: TextStyle(
-                  fontFamily: 'Poppins',
                   fontSize: 18,
                   fontWeight: FontWeight.w600,
                   color: AppColors.pine900,
@@ -374,7 +372,6 @@ class _GreetingWeatherSection extends StatelessWidget {
               Text(
                 'Kamaimo Sulteng',
                 style: TextStyle(
-                  fontFamily: 'Poppins',
                   fontSize: 12,
                   fontWeight: FontWeight.w400,
                   color: AppColors.textSecondary,
@@ -391,11 +388,11 @@ class _GreetingWeatherSection extends StatelessWidget {
               borderRadius: BorderRadius.circular(9999),
               border: Border.all(color: AppColors.emerald100),
             ),
-            child: Row(
+            child: const Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Icon(Icons.wb_sunny_rounded, color: Color(0xFFF59E0B), size: 14),
-                const SizedBox(width: 4),
+                Icon(Icons.wb_sunny_rounded, color: Color(0xFFF59E0B), size: 14),
+                SizedBox(width: 4),
                 Text(
                   '28°C Cerah',
                   style: TextStyle(
@@ -439,7 +436,7 @@ class _CategoryPillsState extends State<_CategoryPills> {
         child: ListView.separated(
           scrollDirection: Axis.horizontal,
           itemCount: _categories.length,
-          separatorBuilder: (_, __) => const SizedBox(width: 8),
+          separatorBuilder: (_, _) => const SizedBox(width: 8),
           itemBuilder: (ctx, i) {
             final active = i == _selected;
             return GestureDetector(
@@ -455,7 +452,6 @@ class _CategoryPillsState extends State<_CategoryPills> {
                 child: Text(
                   _categories[i],
                   style: TextStyle(
-                    fontFamily: 'Poppins',
                     fontSize: 12,
                     fontWeight: active ? FontWeight.bold : FontWeight.w600,
                     color: active ? Colors.white : AppColors.pine900,
@@ -508,7 +504,7 @@ class _SearchBarState extends State<_SearchBar> {
         border: Border.all(color: AppColors.border),
         boxShadow: [
           BoxShadow(
-            color: AppColors.pine700.withOpacity(0.04),
+            color: AppColors.pine700.withValues(alpha: 0.04),
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -523,11 +519,11 @@ class _SearchBarState extends State<_SearchBar> {
             child: TextField(
               controller: _ctrl,
               onSubmitted: _onSubmit,
-              style: const TextStyle(fontFamily: 'Poppins', fontSize: 14, color: AppColors.textPrimary),
+              style: const TextStyle(fontSize: 14, color: AppColors.textPrimary),
               decoration: const InputDecoration(
                 border: InputBorder.none,
                 hintText: 'Cari Danau Paisu Pok, Sombori...',
-                hintStyle: TextStyle(fontFamily: 'Poppins', fontSize: 14, color: AppColors.textTertiary),
+                hintStyle: TextStyle(fontSize: 14, color: AppColors.textTertiary),
                 isDense: true,
                 contentPadding: EdgeInsets.zero,
               ),
@@ -543,7 +539,7 @@ class _SearchBarState extends State<_SearchBar> {
               borderRadius: BorderRadius.circular(12),
               border: Border.all(color: AppColors.border),
             ),
-            child: Icon(
+            child: const Icon(
               Icons.tune_rounded,
               color: AppColors.pine700,
               size: 22,
@@ -583,7 +579,7 @@ class _HeroCardPaisuPok extends StatelessWidget {
                 end: Alignment.bottomCenter,
                 colors: [
                   Colors.transparent,
-                  Colors.black.withOpacity(0.6),
+                  Colors.black.withValues(alpha: 0.6),
                 ],
               ),
             ),
@@ -599,7 +595,7 @@ class _HeroCardPaisuPok extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.9),
+                    color: Colors.white.withValues(alpha: 0.9),
                     borderRadius: BorderRadius.circular(9999),
                   ),
                   child: const Text(
@@ -644,7 +640,7 @@ class _HeroCardPaisuPok extends StatelessWidget {
                       child: Container(
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.2),
+                          color: Colors.white.withValues(alpha: 0.2),
                           shape: BoxShape.circle,
                         ),
                         child: const Icon(
@@ -667,7 +663,6 @@ class _HeroCardPaisuPok extends StatelessWidget {
                           child: Text(
                             'Jelajahi Sekarang',
                             style: TextStyle(
-                              fontFamily: 'Poppins',
                               fontSize: 12,
                               fontWeight: FontWeight.bold,
                               color: Colors.white,
@@ -706,7 +701,6 @@ class _DestinasiIkonikSection extends StatelessWidget {
               const Text(
                 'Destinasi Ikonik Sulteng',
                 style: TextStyle(
-                  fontFamily: 'Poppins',
                   fontSize: 18,
                   fontWeight: FontWeight.w800,
                   color: AppColors.pine900,
@@ -720,10 +714,9 @@ class _DestinasiIkonikSection extends StatelessWidget {
                     MaterialPageRoute(builder: (_) => const SemuaDestinasiScreen()),
                   );
                 },
-                child: Text(
+                child: const Text(
                   'Lihat Semua',
                   style: TextStyle(
-                    fontFamily: 'Poppins',
                     fontSize: 12,
                     fontWeight: FontWeight.bold,
                     color: AppColors.pine700,
@@ -739,7 +732,7 @@ class _DestinasiIkonikSection extends StatelessWidget {
             child: ListView.separated(
               scrollDirection: Axis.horizontal,
               itemCount: 3,
-              separatorBuilder: (_, __) => const SizedBox(width: 16),
+              separatorBuilder: (_, _) => const SizedBox(width: 16),
               itemBuilder: (ctx, i) {
                 final items = [
                   {
@@ -795,7 +788,7 @@ class _DestinasiIkonikSection extends StatelessWidget {
                           flex: 2,
                           child: Container(
                             decoration: BoxDecoration(
-                              color: AppColors.pine500.withOpacity(0.2),
+                              color: AppColors.pine500.withValues(alpha: 0.2),
                               borderRadius: const BorderRadius.only(
                                 topLeft: Radius.circular(16),
                                 topRight: Radius.circular(16),
@@ -823,12 +816,12 @@ class _DestinasiIkonikSection extends StatelessWidget {
                                   padding: const EdgeInsets.symmetric(
                                       horizontal: 8, vertical: 4),
                                   decoration: BoxDecoration(
-                                    color: AppColors.pine700.withOpacity(0.1),
+                                    color: AppColors.pine700.withValues(alpha: 0.1),
                                     borderRadius: BorderRadius.circular(12),
                                   ),
                                   child: Text(
                                     item['kabupaten']!,
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                       fontSize: 10,
                                       fontWeight: FontWeight.bold,
                                       color: AppColors.pine700,
@@ -854,12 +847,12 @@ class _DestinasiIkonikSection extends StatelessWidget {
                                   padding: const EdgeInsets.symmetric(
                                       horizontal: 8, vertical: 2),
                                   decoration: BoxDecoration(
-                                    color: Colors.white.withOpacity(0.9),
+                                    color: Colors.white.withValues(alpha: 0.9),
                                     borderRadius: BorderRadius.circular(12),
                                   ),
                                   child: Text(
                                     item['badge']!,
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                       fontSize: 9,
                                       fontWeight: FontWeight.w800,
                                       color: AppColors.pine700,
@@ -898,9 +891,9 @@ class _DestinasiIkonikSection extends StatelessWidget {
                                 // Price
                                 Row(
                                   children: [
-                                    Text(
+                                    const Text(
                                       'Mulai dari',
-                                      style: const TextStyle(
+                                      style: TextStyle(
                                         fontSize: 9,
                                         fontWeight: FontWeight.w600,
                                         color: AppColors.textTertiary,
@@ -972,9 +965,9 @@ class _EventPromoCard extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Column(
+                const Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: const [
+                  children: [
                     Row(
                       children: [
                         Icon(Icons.event_rounded, size: 12, color: AppColors.pine500),
@@ -1023,11 +1016,11 @@ class _EventPromoCard extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             // Location
-            Row(
+            const Row(
               children: [
-                const Icon(Icons.location_on_rounded, size: 14, color: AppColors.pine500),
-                const SizedBox(width: 4),
-                const Text(
+                Icon(Icons.location_on_rounded, size: 14, color: AppColors.pine500),
+                SizedBox(width: 4),
+                Text(
                   'Tentena, Poso • 24 Oktober 2025',
                   style: TextStyle(
                     fontSize: 12,
@@ -1216,10 +1209,9 @@ class _StatistikWisman extends StatelessWidget {
                     MaterialPageRoute(builder: (_) => const SemuaDestinasiScreen()),
                   );
                 },
-                child: Text(
+                child: const Text(
                   'Lihat Semua',
                   style: TextStyle(
-                    fontFamily: 'Poppins',
                     fontSize: 12,
                     fontWeight: FontWeight.bold,
                     color: AppColors.pine700,
@@ -1304,7 +1296,7 @@ class _StatistikWisman extends StatelessWidget {
           )),
           // View all button
           const SizedBox(height: 12),
-          Center(
+          const Center(
             child: Text(
               'Lihat Ranking Lengkap',
               style: TextStyle(
@@ -1332,10 +1324,10 @@ class _TestimoniSection extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
+          const Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text(
+              Text(
                 'Apa Kata Para Penjelajah?',
                 style: TextStyle(
                   fontSize: 18,
@@ -1378,7 +1370,7 @@ class _TestimoniSection extends StatelessWidget {
                   width: 48,
                   height: 48,
                   decoration: BoxDecoration(
-                    color: AppColors.pine700.withOpacity(0.1),
+                    color: AppColors.pine700.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: const Icon(
@@ -1409,7 +1401,7 @@ class _TestimoniSection extends StatelessWidget {
                       width: 40,
                       height: 40,
                       decoration: BoxDecoration(
-                        color: AppColors.pine500.withOpacity(0.2),
+                        color: AppColors.pine500.withValues(alpha: 0.2),
                         shape: BoxShape.circle,
                       ),
                       child: const Center(
@@ -1468,7 +1460,7 @@ class _ConciergeWABanner extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
-          gradient: LinearGradient(
+          gradient: const LinearGradient(
             colors: [AppColors.pine800, AppColors.pine700],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
@@ -1490,7 +1482,7 @@ class _ConciergeWABanner extends StatelessWidget {
               width: 56,
               height: 56,
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.15),
+                color: Colors.white.withValues(alpha: 0.15),
                 shape: BoxShape.circle,
               ),
               child: const Center(
@@ -1503,10 +1495,10 @@ class _ConciergeWABanner extends StatelessWidget {
             ),
             const SizedBox(width: 16),
             // Text content
-            Expanded(
+            const Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: const [
+                children: [
                   Text(
                     'Butuh Bantuan Perjalanan?',
                     style: TextStyle(
@@ -1568,11 +1560,11 @@ class _Footer extends StatelessWidget {
       decoration: const BoxDecoration(
         border: Border(top: BorderSide(color: AppColors.borderLight)),
       ),
-      child: Column(
+      child: const Column(
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: const [
+            children: [
               Icon(Icons.account_balance_rounded, size: 16, color: AppColors.pine700),
               SizedBox(width: 6),
               Text(
@@ -1586,17 +1578,17 @@ class _Footer extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 4),
-          const Text(
+          SizedBox(height: 4),
+          Text(
             'BBWI • Berani Kamaimo',
             textAlign: TextAlign.center,
             style: TextStyle(fontSize: 11, fontWeight: FontWeight.w500, color: AppColors.textSecondary),
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: 16),
           Wrap(
             alignment: WrapAlignment.center,
             spacing: 8,
-            children: const [
+            children: [
               _FooterLink('Hotel & Penginapan'),
               Text('•', style: TextStyle(color: AppColors.pine500)),
               _FooterLink('Kuliner Khas'),

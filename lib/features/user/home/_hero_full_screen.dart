@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import '../../../core/theme/app_colors.dart';
 
 /// Hero Section Full Screen per Figma design (node 4273:55)
@@ -9,12 +8,6 @@ class _HeroFullScreenSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Prevent landscape on hero screen
-    SystemChrome.setPreferredOrientations([
-      DeviceOrientation.portraitUp,
-      DeviceOrientation.portraitDown,
-    ]);
-
     return Container(
       height: 400,
       width: double.infinity,
