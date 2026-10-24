@@ -60,6 +60,12 @@ flutter:
   # the material Icons class.
   uses-material-design: true
 
+  # Assets
+  assets:
+    - assets/images/beranda/
+    - assets/images/destinasi/
+    - assets/images/paket/
+
   # Fonts
   fonts:
     - family: PlusJakartaSans

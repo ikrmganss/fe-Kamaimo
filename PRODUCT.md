@@ -27,6 +27,7 @@ Satu-satunya aplikasi resmi Dinas Pariwisata Provinsi Sulawesi Tengah untuk menj
 ## Operating Context
 
 - Aplikasi dibuka → Halaman Sambutan (identitas + ranking turis + tombol Masuk) → Home (scroll sections)
+- Home per Figma `4273:55`: NavBar (logo + toggle ID/EN) → Hero Card (headline "Jelajahi Surga Tersembunyi di Jantung Sulawesi" + weather 29°C Palu + search) → Quick Pills → Peta Interaktif (chips kabupaten + Desa Card Luk Panenteng) → Carousel Wisata Unggulan (3 kartu, viewportFraction 0.75) → Atraksi & Event Budaya (2 kartu) → Footer hijau `#2E5C43`
 - Mode user: browsing tanpa login, 2 bahasa (ID/EN), tracking visitor background
 - Mode admin: pintu rahasia di search bar (kode `adminBK2025`) → login → dashboard + CRUD 9 entitas
 - Backend existing di port 3000, reuse apa adanya
@@ -35,7 +36,8 @@ Satu-satunya aplikasi resmi Dinas Pariwisata Provinsi Sulawesi Tengah untuk menj
 
 - **Platform:** Android (target utama), iOS possible later
 - **Font:** Plus Jakarta Sans (5 weights: Regular/Medium/SemiBold/Bold/ExtraBold) — sudah di `fonts/`
-- **Color palette:** Pine aesthetic (#1D3A30 pine900, #2E5C43 pine700, #10B981 emerald500, #F8FAF4 background)
+- **Color palette:** Pine aesthetic (#1D3A30 pine900, #15442D pine800 nav/toggle, #2E5C43 pine700 primary, #F8FAF4 background, #EAF2EB peta card)
+- **Font resmi:** Plus Jakarta Sans — ⚠️ bukan Poppins/Playfair (spec lama `design-specs/flutter_handoff_spec.md` node `2:8522` STALE, jangan dipakai)
 - **Navigation:** Floating glassmorphic bottom nav (5 tab: Beranda/Destinasi/Event/Paket/Eksplor)
 - **State management:** provider ^6.1.5+1
 - **Figma design:** MAGANG-PADE file (fileKey: 37V5bMPHiUkn7YR1Q0cS8j) — Beranda node-id: 4273:55
@@ -45,7 +47,7 @@ Satu-satunya aplikasi resmi Dinas Pariwisata Provinsi Sulawesi Tengah untuk menj
 ## Brand Commitments
 
 - **Nama:** Berani Kamaimo
-- **Tagline:** "Menunggu petualanganmu di jantung indonesia"
+- **Tagline:** "Berani Kamaimo • Gerakan Wisata Berkelanjutan & Ekraf Sulteng" (footer); hero copy: "Jelajahi Surga Tersembunyi di Jantung Sulawesi"
 - **Identity:** Pine/nature aesthetic (hijau tua, emerald, putih bersih) — bukan biru provinsi lama
 - **Logo:** Icon landscape dalam rounded square pine600 + text "BERANI KAMAIMO" stacked
 - **Footer credit:** "Dinas Pariwisata Provinsi Sulawesi Tengah"
@@ -53,11 +55,12 @@ Satu-satunya aplikasi resmi Dinas Pariwisata Provinsi Sulawesi Tengah untuk menj
 
 ## Evidence on Hand
 
-- Figma design: https://www.figma.com/design/37V5bMPHiUkn7YR1Q0cS8j/MAGANG-PADE?node-id=4273-55
+- Figma design (sumber kebenaran): https://www.figma.com/design/37V5bMPHiUkn7YR1Q0cS8j/MAGANG-PADE?node-id=4273-55
 - Web produksi: https://beranikamaimo.sultengprov.go.id/
 - PRD lengkap: `PRD.md`
-- Design spec: `design-specs/flutter_handoff_spec.md`
-- Screenshot desain: `assets/images/desain_1_beranda.png`
+- Implementasi beranda: `lib/features/user/home/user_shell.dart` + smoke test `test/beranda_smoke_test.dart`
+- Aset crop Figma: `assets/images/beranda/` (kartu unggulan, peta, thumb event, thumb desa)
+- ⚠️ `assets/images/desain_1_beranda.png` & `design-specs/flutter_handoff_spec.md` = desain lama yang TIDAK akurat — jangan dipakai acuan
 
 ## Product Principles
 

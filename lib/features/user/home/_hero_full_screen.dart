@@ -11,10 +11,10 @@ class _HeroFullScreenSection extends StatelessWidget {
     return Container(
       height: 400,
       width: double.infinity,
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         color: AppColors.background,
         image: DecorationImage(
-          image: const AssetImage('assets/images/danau_paisu_pok.jpg'),
+          image: AssetImage('assets/images/danau_paisu_pok.jpg'),
           fit: BoxFit.cover,
         ),
       ),
@@ -23,11 +23,11 @@ class _HeroFullScreenSection extends StatelessWidget {
         children: [
           // Gradient overlay for text readability (match Figma: rgba(18, 40, 29, 0.8))
           Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
+            decoration: const BoxDecoration(
+              gradient: const LinearGradient(
                 begin: Alignment.bottomCenter,
                 end: Alignment.topCenter,
-                colors: [
+                colors: const [
                   Color(0xCC12281D), // rgba(18, 40, 29, 0.8)
                   Color(0x0012281D), // transparent at top
                 ],
