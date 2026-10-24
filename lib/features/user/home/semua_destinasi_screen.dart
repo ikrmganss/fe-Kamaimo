@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../core/theme/app_colors.dart';
-import 'detail_desa_screen.dart';
+import '../detail_wisata/detail_wisata_screen.dart';
 
 /// Halaman Semua Destinasi (Grid List) — sesuai Figma
 class SemuaDestinasiScreen extends StatefulWidget {
@@ -150,7 +150,7 @@ class _SemuaDestinasiScreenState extends State<SemuaDestinasiScreen> {
                         onTap: () => Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (_) => DetailDesaScreen(
+                            builder: (_) => DetailWisataScreen(
                               desaId: item['id'] as int,
                               namaDesa: item['nama'] as String,
                               lokasi: item['kabupaten'] as String,

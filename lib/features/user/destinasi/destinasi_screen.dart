@@ -2,7 +2,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../core/theme/app_colors.dart';
-import '../home/detail_desa_screen.dart';
+import '../detail_wisata/detail_wisata_screen.dart';
 import '../home/user_shell.dart';
 
 // Tab Destinasi — Figma MAGANG-PADE node 4258:1619
@@ -81,7 +81,7 @@ class _DestinasiScreenState extends State<DestinasiScreen> {
 
   void _openDetail(_Item it) {
     Navigator.of(context).push(MaterialPageRoute(
-      builder: (_) => DetailDesaScreen(
+      builder: (_) => DetailWisataScreen(
         desaId: 1,
         namaDesa: it.nama,
         lokasi: it.kabupaten,

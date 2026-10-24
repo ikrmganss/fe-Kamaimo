@@ -7,7 +7,7 @@ import 'core/theme/app_theme.dart';
 import 'core/utils/constants.dart';
 import 'data/repositories/kunjungan_turis_repository.dart';
 import 'features/user/sambutan/halaman_sambutan.dart';
-import 'features/user/home/detail_desa_screen.dart';
+import 'features/user/detail_wisata/detail_wisata_screen.dart';
 import 'features/user/home/semua_destinasi_screen.dart';
 import 'features/user/home/user_shell.dart';
 
@@ -48,7 +48,7 @@ class MyApp extends StatelessWidget {
           if (settings.name == AppConstants.routeDetailDesa) {
             final args = settings.arguments as Map<String, dynamic>?;
             return MaterialPageRoute(
-              builder: (_) => DetailDesaScreen(
+              builder: (_) => DetailWisataScreen(
                 desaId: args?['desaId'] ?? 1,
                 namaDesa: args?['namaDesa'] ?? 'Destinasi',
                 lokasi: args?['lokasi'] ?? 'Sulawesi Tengah',

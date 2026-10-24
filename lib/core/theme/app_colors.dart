@@ -104,4 +104,16 @@ class AppColors {
     begin: Alignment.bottomCenter,
     end: Alignment.topCenter,
   );
+
+  // ── Detail Wisata (frame 4714:452 "Detail Wisata - Luk Panenteng (Modern)") ──
+  static const Color detailBackground = Color(0xFFF4F6F1); // bg halaman
+  static const Color detailBorder     = Color(0xFFE4E8E0); // border card
+  static const Color detailBody       = Color(0xFF4D554F); // body/desc
+  static const Color earth            = Color(0xFF8D4E29); // jalur darat
+  static const Color navySky          = Color(0xFF2D3C59); // jalur udara
+  static const Color mintSoft         = Color(0x66BBEECD); // 40% #BBEECD (jalur laut)
+  static const Color mintSoftStrong   = Color(0x99BBEECD); // 60% #BBEECD (avatar)
+  static const Color peachSoft        = Color(0x80FFDBCA); // 50% #FFDBCA (jalur darat)
+  static const Color creamCard        = Color(0xFFFAF8F5); // footer kartu
+  static const Color starGold         = Color(0xFFE5BA41); // bintang rating
 }
