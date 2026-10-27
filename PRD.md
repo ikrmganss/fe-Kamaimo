@@ -1,11 +1,13 @@
 # PRD — Berani Kamaimo
 
 **Product Requirements Document**
-**Versi:** 1.1
+**Versi:** 1.3
 **Platform:** Mobile — Flutter
 **Konsep:** Konversi 3 repo web (Dinas Pariwisata Sulawesi Tengah) → satu aplikasi mobile, mode User (publik) + mode Admin.
 
 _Riwayat versi:_
+- **1.3** — §8 dirapikan ulang: ternyata v1.2 menyasar mockup yang salah (`assets/images/desain_1_beranda.png`). Struktur Beranda kini diambil **persis dari Figma node `4273:55`** (file `MAGANG-PADE`) yang sudah ter-implementasi di `user_shell.dart` dan lolos smoke test: NavBar → Hero Card (headline + weather + search) → Quick Pills → Peta Interaktif (chips kabupaten + Desa Card) → Carousel **Wisata Unggulan Sulteng** (3 kartu) → **Atraksi & Event Budaya** (2 kartu) → Footer. ❗Design spec lama `design-specs/flutter_handoff_spec.md` (node `2:8522`, Poppins/Playfair) terbukti desain lain — **stale, jangan dipakai**; font resmi = **Plus Jakarta Sans**.
+- **1.2** — Home tidak menampilkan Statistik Wisman, Testimoni, Concierge WhatsApp Banner (semuanya memang tidak ada di Figma); Ulasan Pengunjung hanya di Detail Desa.
 - **1.1** — Tambah layar **Halaman Sambutan** (§7) sebagai layar pembuka sebelum Home; **Ranking Asal Turis dipindah** dari Home ke layar itu (semula §7.8, sekarang §8.8 sebagai penunjuk). Section 7-30 di-shift menjadi 8-31.
 - **1.0** — Versi awal.
 
@@ -79,13 +81,13 @@ HALAMAN SAMBUTAN (pembuka, tiap kali app dibuka)
    │
    ▼
 HOME (mode user)
-   │
-   ├── Peta Desa Wisata (marker → detail desa)
-   ├── Carousel Wisata Unggulan → Detail Desa
-   ├── Carousel Desa Wisata → Detail Desa
-   ├── Carousel Atraksi/Event → Detail Event
-   ├── Ulasan Pengunjung → Modal Tambah Ulasan
-   └── Footer
+    │
+    ├── Hero Card (headline + weather + search)
+    ├── Quick Pills → filter destinasi
+    ├── Peta Interaktif Wisata → Detail Desa (via Desa Card)
+    ├── Carousel Wisata Unggulan → Detail Desa
+    ├── Atraksi & Event Budaya → Detail Event
+    └── Footer
           │
           ▼
 ┌──────────────────────────────────────────────┐
@@ -104,7 +106,7 @@ Aplikasi satu layar utama (Home dengan section-scroll, meniru web user) + halama
 BERANI KAMAIMO (satu app)
 ├── MODE USER (tanpa login)
 │   ├── Halaman Sambutan (pembuka: identitas, bahasa, Ranking Turis, tombol Masuk)
-│   ├── Home (scroll sections: Hero, Peta, Carousels, Ulasan, Footer)
+│   ├── Home (scroll, Figma `4273:55`: NavBar → Hero Card (headline+weather+search) → Quick Pills → Peta Interaktif (chips + Desa Card) → Carousel Wisata Unggulan → Atraksi & Event → Footer)
 │   ├── Detail Desa Wisata
 │   ├── Detail Event / Atraksi
 │   ├── Paket Wisata (search, carousel↔grid, modal detail)
@@ -120,7 +122,7 @@ BERANI KAMAIMO (satu app)
     └── Profil Admin
 ```
 
-Navigasi utama memakai **bottom navigation / hamburger drawer**, meniru menu NavBar web: Beranda, Wisata Unggulan, Desa Wisata, Atraksi, Paket Wisata, Kuliner, Hotel.
+Navigasi utama memakai **bottom navigation floating** 5 tab: Beranda, Destinasi, Event, Paket, Eksplor.
 
 ---
 
@@ -167,66 +169,94 @@ Menampilkan asal wisatawan asing; ini sorotan utama halaman sambutan.
 
 ## 8. Screen — HOME (Mode User)
 
-Home adalah halaman scroll panjang meniru web user `/`. Dicapai lewat tombol "Masuk" dari Halaman Sambutan (§7).
+Home adalah halaman scroll panjang, ditempuh lewat tombol "Masuk" dari Halaman Sambutan (§7). **Struktur & copy diambil persis dari Figma node `4273:55`** (file `MAGANG-PADE`), sudah ter-implementasi di `lib/features/user/home/user_shell.dart` + smoke test `test/beranda_smoke_test.dart`. Aset potongan Figma di `assets/images/beranda/`. Font **Plus Jakarta Sans** (bukan Poppins).
 
-### 8.1 NavBar
+Urutan section:
 
-- Fixed, berubah **blur saat scroll**; logo Pemprov.
-- Menu: Beranda, Wisata Unggulan, Desa Wisata, Atraksi, Paket Wisata, Kuliner, Hotel.
-- Dropdown pilihan bahasa **ID / EN**.
-- Mobile: pakai bottom sheet/drawer, menu scroll-to-section.
+1. NavBar (pinned)
+2. Hero Card — headline + weather + search
+3. Quick Activity Pills
+4. Peta Interaktif Wisata (chips kabupaten + Desa Card)
+5. Carousel Wisata Unggulan Sulteng
+6. Atraksi & Event Budaya
+7. Footer
 
-### 8.2 Hero
+> **Tidak ada di Beranda** (memang tidak ada di Figma): Statistik Wisman, Testimoni/Ulasan Pengunjung, Concierge WhatsApp Banner, Ranking Asal Turis (pindah ke §7.1). Ulasan tetap di Detail Desa (§14).
 
-- Gambar **Luk Panenteng** full-screen.
-- Judul animasi **per-huruf** "Sulawesi Tengah".
-- Tagline: "Menunggu petualanganmu di jantung indonesia".
+### 8.1 NavBar (Sticky Header)
 
-### 8.3 Peta Desa Wisata
+- Tinggi 64dp, pinned saat scroll, efek blur ketika shrinkOffset > 4.
+- Logo kiri: icon landscape dalam rounded-square pine600 + teks 2 baris "BERANI" / "KAMAIMO" (pine900).
+- **Language pill** kanan: toggle **ID/EN** — segmen aktif pill gelap `#15442D` teks putih.
 
-- Tile **CartoDB light** (react-leaflet → Flutter map, mis. `flutter_map`).
-- Marker tiap desa: **titik biru** = `DESA_WISATA`, **pulse** = `DESA_UNGGULAN`.
-- Klik marker → navigasi ke detail desa.
-- Tooltip: media preview (foto/video/YouTube) + nama + lokasi.
+### 8.2 Hero Card (Headline + Weather + Search)
 
-### 8.4 Carousel Wisata Unggulan
+- Kartu gradient muda (`#ECFDF5 → #F2F4EE → #FFFFFF`), radius 28, margin 16, shadow lembut.
+- Headline 26px w800 pine900, 3 baris: **"Jelajahi Surga Tersembunyi di Jantung Sulawesi"**.
+- **Weather widget** putih@90 (96×88, r16) di kanan atas kartu: ikon matahari (kotak `#FEF3C7`), **29°C**, "📍 Palu", "Cerah Berawan".
+  - MVP: data statis — `ponytail:` real weather API menyusul.
+- Body copy 13px w500: "Temukan pesona bahari kristal, labirin karst megah, dan keagungan peradaban megalitikum tertua di Nusantara."
+- **Search bar** pills putih tinggi 46, placeholder *"Cari destinasi atau kabupaten..."* → submit membuka `SemuaDestinasiScreen`.
 
-- Filter `DESA_UNGGULAN`.
-- Card 3D cover-flow (active besar, samping blur kecil).
-- Media: foto / video auto-mute-loop / YouTube embed.
-- Tombol "Info Detail"; dot indicator.
+### 8.3 Quick Activity Pills
 
-### 8.5 Carousel Desa Wisata
+Pills horizontal 34dp, aktif `#2E5C43` teks putih, tidak aktif putih ber-border `#E2E8E0`:
+**Semua** (aktif) · **Bahari & Karst** · **Megalitikum** · **Danau & Air Terjun**.
+(Di M2+, pill memfilter daftar destinasi.)
 
-- Filter `DESA_WISATA`.
-- Pola sama dengan carousel unggulan.
+### 8.4 Peta Interaktif Wisata
 
-### 8.6 Carousel Atraksi / Event
+- Judul section: "Peta Interaktif Wisata" (18 w800).
+- **Chips kabupaten** (25dp, aktif `#2E5C43` putih): Semua (43) · Banggai (14) · Poso (11) · Morowali (9) · Palu & Sigi (9) — angka di belakang = jumlah desa.
+- Kartu background `#EAF2EB` r26 tinggi 320:
+  - Ilustrasi peta (crop Figma `peta_placeholder.png`, offset top) — `ponytail:` M2 ganti **flutter_map** + CartoDB tiles + marker desa interaktif (klik marker → Detail Desa), legend/zoom control ikut hidup.
+  - **Desa Card** overlay bawah (putih@95, r16): badge "**DESA UNGGULAN**" (`#D1FAE5`/emerald600), ★ 4.9, chip jarak "**2.4 km**", nama "**Desa Luk Panenteng**", tombol **"Buka"** (62×28, `#2E5C43`, r12) → Detail Desa.
 
-- Pola sama; card: nama event, lokasi, tombol Info Detail.
+### 8.5 Carousel Wisata Unggulan Sulteng
 
-### 8.7 Ulasan Pengunjung (ringkasan)
+- Judul: "Wisata Unggulan Sulteng" + tombol "Semua" → `SemuaDestinasiScreen`.
+- **PageView `viewportFraction: 0.75`**, kartu 290×442 (media + badge kiri-atas + chip rating bawah-kiri), radius 24; kartu aktif lebih gelap; **indicator dots** 6×6 (`#2E5C43` aktif / `#E2E8E0`).
+- Konten kartu: nama, kabupaten, deskripsi 2 baris, harga ("MULAI DARI" / "PAKET TUR" + Rp), CTA **"Detail →"** (87×28 pill `#2E5C43`, kartu aktif) atau **"Info Detail"** (82×29 `#E7E9E3`).
+- 3 kartu seed (nanti dari API `/desaWisata`):
 
-- Carousel kartu ulasan: avatar inisial berwarna, nama, komentar (max 4 baris), bintang rating 1–5.
-- Tombol/modal **Tambah Ulasan**.
+| Kartu | Badge | Kabupaten | Harga | Rating |
+|---|---|---|---|---|
+| Luk Panenteng & Danau Paisu Pok | KOLAM KACA | BANGGAI KEPULAUAN | Mulai dari Rp 15.000/orang | 4.9 (1.4k ulasan) |
+| Kepulauan Sombori | THE SECRET PARADISE (oranye `#D97706`) | MOROWALI | Paket tur Rp 350.000/tur | 4.95 |
+| Danau Poso & Pasir Emas | PASIR EMAS TENTENA | POSO • TENTENA | Mulai dari Rp 10.000/orang | 4.88 |
 
-### 8.8 Ranking Asal Turis
+(Foto kartu 1-2 hasil crop Figma; kartu 3 masih `ponytail:` gradient placeholder sampai ada aset/API.)
 
-**Dipindah ke Halaman Sambutan** (§7.1) — tidak lagi section Home. Tampilan & datanya sama persis, hanya lokasi section yang beda.
+### 8.6 Atraksi & Event Budaya
 
-### 8.9 Footer
+- Judul dengan ikon event: "Atraksi & Event Budaya" (+ "Semua" → layar event).
+- 2 kartu horizontal r22 (tinggi ~101): **thumbnail 56×64** + chip tanggal baked (`#2E5C43`), isi: badge **"KARISMA EVENT NUSANTARA 2025"** (`#D1FAE5`), nama, "📍 lokasi", deskripsi 1 baris, chip countdown **"H-45 Hari"** (bg `#FFFBEB`, border `#FDE68A`, teks `#92400E`), tombol **"Detail →"** (66×32, `#EDEFE9`).
+- 2 kartu seed (dari `/atraksi`):
 
-- Tagline; sosial media (Instagram/YouTube/Facebook dinaspariwisatasulteng).
-- Link Hotel / Kuliner / Paket Wisata; © 2025 Dinas Pariwisata Sulteng.
+| Event | Lokasi | Tanggal | Deskripsi |
+|---|---|---|---|
+| Festival Danau Poso ke-24 | Tentena, Poso | 24 OKT (H-45 Hari) | Parade budaya, tari mogele, & lomba perahu naga. |
+| Festival Teluk Tomini (FTT) | Parigi Moutong | 18 NOV (H-45 Hari) | Eksplorasi bawah laut, karnaval kostum bahari & expo UMKM. |
 
-### 8.10 State Handling
+### 8.7 Footer
 
-LoadingCard / EmptyCard / ErrorCard untuk tiap section.
+- Background full-block `#2E5C43`, teks putih.
+- Tagline baris 1 logo mini + **"Berani Kamaimo • Gerakan Wisata Berkelanjutan & Ekraf Sulteng"**.
+- Kolom link (`#467A5C`): Destinasi · Kuliner Khas · Hotel & Penginapan · Paket Wisata · Hubungi Kami.
+- 3 tombol sosial bulat 32dp (Instagram / YouTube / Facebook) + credit putih: **"© 2026 Dinas Pariwisata Sulawesi Tengah. Hak Cipta Dilindungi."**.
+- Bottom nav **floating** putih r28 melayang di atas footer; footer tetap terlihat di bawahnya (nav melayang tidak menutupi scroll akhir).
 
-### 8.11 SEO/SEMU (adaptasi mobile)
+### 8.8 State Handling
+
+- LoadingCard / EmptyCard / ErrorCard untuk section yang ambil API (peta/kartu/carousel/event); seed konten di M1 statis.
+- Cuaca "29°C / Cerah Berawan" masih statis — real API menyusul.
+
+### 8.9 SEO/SEMU (adaptasi mobile)
 
 - Web asli: react-helmet-async + JSON-LD (TouristDestination) + sitemap.xml.
 - Mobile: tidak ada SEO klasik; **pembagian tinggal di luar scope** (tidak ditulis ulang).
+
+> **Pintu rahasia admin tetap di Beranda** (Keputusan §6 kandidat A — sudah jalan): ketik **`adminBK2025`** di search bar hero (§8.2) → snackbar "Mode admin" (redirect ke admin login di M3).
 
 ---
 
@@ -281,7 +311,7 @@ LoadingCard / EmptyCard / ErrorCard untuk tiap section.
 
 ## 14. Ulasan (Komponen Bersama)
 
-Tampil di Home carousel + DetailDesa.
+Tampil di DetailDesa (sebelumnya juga di Home, **dihapus dari Home** sejak PRD v1.2).
 
 - Carousel kartu ulasan: avatar inisial berwarna, nama, komentar (max 4 baris), bintang 1–5.
 - **Modal Tambah Ulasan**: input nama, textarea komentar, pilih rating bintang; validasi wajib isi; POST `/ulasan/insert` (**tanpa login**); toast sukses.
@@ -425,7 +455,7 @@ Backend lama `manda2712/Backend_Dinas_Pariwisata` (Express 5 + Prisma 6 + Postgr
 - Masuk lewat **Halaman Sambutan** setiap aplikasi dibuka; pindah ke Home hanya lewat tombol "Masuk".
 - Ganti bahasa ID/EN di Halaman Sambutan, pilihan tersimpan dan dipakai di seluruh app.
 - Lihat ranking **Top 5 negara asal turis** di Halaman Sambutan.
-- Browse Home (hero, peta, 3 carousel, ulasan, footer).
+- Browse Home per Figma `4273:55` (navbar, hero headline+weather+search, pills aktivitas, peta interaktif + chips + desa card, carousel wisata unggulan, atraksi & event, footer).
 - Buka detail desa wisata & cara akses (Palu/Luwuk, darat/laut/udara).
 - Buka detail event beserta countdown.
 - Cari & lihat paket wisata, kuliner (dengan rumah makan + gmaps), hotel (telepon/maps/website).
@@ -451,7 +481,7 @@ Prioritas build (paling sederhana dulu, naik kerumitan sesuai kebutuhan):
 ### Fase 1 — Mode User inti (baca data)
 - Kerangka Flutter + tema + navigasi bottom/drawer.
 - **Halaman Sambutan**: identitas + tombol "Masuk" ke Home + skeleton ranking.
-- Home: Hero + Peta (marker, tooltip) + Carousel Desa/Atraksi (cover-flow sederhana).
+- Home: NavBar + Hero (headline, weather, search) + Quick Pills + Peta Interaktif (chips + Desa Card, ilustrasi) + Carousel Unggulan (3 kartu, viewportFraction 0.75) + 2 kartu Event + Footer — semua per Figma `4273:55`.
 - Detail Desa (glass-card + How to Get There + Ulasan).
 - Detail Event (countdown).
 - i18n `_id`/`_en` + fallback.
@@ -561,7 +591,7 @@ lib/
 Mode User dianggap berhasil apabila user dapat:
 
 1. Membuka aplikasi dan melihat **Halaman Sambutan** (identitas, ranking turis, tombol "Masuk") sebelum Home.
-2. Tekan "Masuk" lalu sampai ke Home (hero, peta, carousel, ulasan).
+2. Tekan "Masuk" lalu sampai ke Home (hero + weather + search, pills, peta interaktif, carousel unggulan, event, footer).
 3. Melihat peta desa wisata dan membuka detail desa dari marker.
 4. Melihat detail cara akses (Palu/Luwuk, 3 moda transportasi).
 5. Melihat detail event + countdown.

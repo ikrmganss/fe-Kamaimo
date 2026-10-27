@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 /// Memuat logo, nama Berani Kamaimo, tagline, pilihan bahasa,
 /// Ranking Asal Turis (Top 5 Negara), dan tombol besar "Masuk".
 class HalamanSambutan extends StatelessWidget {
-  const HalamanSambutan({Key? key}) : super(key: key);
+  const HalamanSambutan({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -62,15 +62,15 @@ class HalamanSambutan extends StatelessWidget {
                   borderRadius: BorderRadius.circular(16),
                   boxShadow: [
                     BoxShadow(
-                      color: const Color(0xFF1A3A2A).withOpacity(0.05),
+                      color: const Color(0xFF1A3A2A).withValues(alpha: 0.05),
                       blurRadius: 10,
                       offset: const Offset(0, 4),
                     ),
                   ],
                 ),
-                child: Column(
+                child: const Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: const [
+                  children: [
                     Text(
                       'Top 5 Negara Asal Wisatawan',
                       style: TextStyle(

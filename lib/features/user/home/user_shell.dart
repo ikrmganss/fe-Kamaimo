@@ -1,9 +1,12 @@
-import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'dart:ui';
-import '../../../core/theme/app_colors.dart';
 
-/// Shell user: bottom nav floating + home screen panjang.
+import 'package:flutter/material.dart';
+import '../../../core/theme/app_colors.dart';
+import '../destinasi/destinasi_screen.dart';
+import '../event/event_screen.dart';
+import 'semua_destinasi_screen.dart';
+
+/// Shell user: nav floating 5 tab + beranda, mengikuti Figma node 4273:55.
 class UserShell extends StatefulWidget {
   const UserShell({super.key});
 
@@ -22,14 +25,12 @@ class _UserShellState extends State<UserShell> {
         index: _currentIndex,
         children: const [
           HomeScreen(),
-          // M2 screens — placeholder sementara
-          _PlaceholderScreen('Destinasi'),
-          _PlaceholderScreen('Event'),
+          DestinasiScreen(),
+          EventScreen(),
           _PlaceholderScreen('Paket'),
           _PlaceholderScreen('Eksplor'),
         ],
       ),
-      // Bottom nav floating glassmorphic (M1-1.1)
       bottomNavigationBar: _FloatingBottomNav(
         currentIndex: _currentIndex,
         onTap: (i) => setState(() => _currentIndex = i),
@@ -38,7 +39,7 @@ class _UserShellState extends State<UserShell> {
   }
 }
 
-// ─── Floating Bottom Nav ───────────────────────────────────────────────────
+// ─── Floating Bottom Nav ──────────────────────────────────────────────────────
 
 class _FloatingBottomNav extends StatelessWidget {
   final int currentIndex;
@@ -49,41 +50,33 @@ class _FloatingBottomNav extends StatelessWidget {
   static const _items = [
     (icon: Icons.home_rounded, label: 'Beranda'),
     (icon: Icons.map_rounded, label: 'Destinasi'),
-    (icon: Icons.event_rounded, label: 'Event'),
-    (icon: Icons.card_giftcard_rounded, label: 'Paket'),
-    (icon: Icons.explore_rounded, label: 'Eksplor'),
+    (icon: Icons.event, label: 'Event'),
+    (icon: Icons.receipt_long, label: 'Paket'),
+    (icon: Icons.explore, label: 'Eksplor'),
   ];
 
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+        padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(9999),
           child: BackdropFilter(
             filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
             child: Container(
               height: 70,
+              clipBehavior: Clip.hardEdge,
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.8),
+                color: AppColors.surface,
                 borderRadius: BorderRadius.circular(9999),
-                border: Border.all(
-                  color: Colors.white.withOpacity(0.3),
-                  width: 1.5,
-                ),
-                boxShadow: const [
-                  BoxShadow(
-                    color: Color(0x40000000),
-                    blurRadius: 16,
-                    offset: Offset(0, 4),
-                  ),
-                ],
+                boxShadow: AppColors.shadowFloating,
               ),
               child: Row(
                 children: List.generate(_items.length, (i) {
                   final item = _items[i];
                   final active = i == currentIndex;
+                  final color = active ? AppColors.pine800 : AppColors.textMuted;
                   return Expanded(
                     child: GestureDetector(
                       onTap: () => onTap(i),
@@ -91,18 +84,14 @@ class _FloatingBottomNav extends StatelessWidget {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(
-                            item.icon,
-                            size: 22,
-                            color: active ? AppColors.pine800 : AppColors.textMuted,
-                          ),
-                          const SizedBox(height: 2),
+                          Icon(item.icon, size: 19, color: color),
+                          const SizedBox(height: 3),
                           Text(
                             item.label,
                             style: TextStyle(
                               fontSize: 10,
-                              fontWeight: active ? FontWeight.bold : FontWeight.w500,
-                              color: active ? AppColors.pine800 : AppColors.textMuted,
+                              fontWeight: active ? FontWeight.w700 : FontWeight.w500,
+                              color: color,
                               fontFamily: 'PlusJakartaSans',
                             ),
                           ),
@@ -132,7 +121,7 @@ class _FloatingBottomNav extends StatelessWidget {
   }
 }
 
-// ─── Home Screen ─────────────────────────────────────────────────────────────
+// ─── Beranda ──────────────────────────────────────────────────────────────────
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -143,7 +132,6 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final ScrollController _scroll = ScrollController();
-  String _locale = 'ID'; // M1-1.6 language switcher state
 
   @override
   void dispose() {
@@ -155,43 +143,32 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
-      body: Stack(
-        children: [
-          CustomScrollView(
-            controller: _scroll,
-            slivers: [
-              // NavBar sticky (M1-1.2)
-              SliverPersistentHeader(
-                pinned: true,
-                delegate: _NavBarDelegate(
-                  locale: _locale,
-                  onToggleLocale: () {
-                    setState(() => _locale = _locale == 'ID' ? 'EN' : 'ID');
-                  },
-                ),
-              ),
-              SliverToBoxAdapter(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // 7.2 Hero + Search (M1-1.4)
-                    _HeroSection(locale: _locale),
-                    // Quick Pill Filters
-                    _QuickFilters(),
-                    // 7.3 Peta Interaktif (M1-2)
-                    _PetaSection(),
-                    // 7.4 Carousel Wisata Unggulan (M1-2.6)
-                    _CarouselWisata(),
-                    // 7.6 Event & Atraksi (M1-2.7)
-                    _EventSection(),
-                    // 7.9 Footer
-                    _Footer(),
-                    // extra padding bawah untuk floating nav
-                    const SizedBox(height: 100),
-                  ],
-                ),
-              ),
-            ],
+      body: CustomScrollView(
+        controller: _scroll,
+        slivers: const [
+          SliverPersistentHeader(
+            pinned: true,
+            delegate: KamaimoBarDelegate(),
+          ),
+          SliverToBoxAdapter(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(height: 12),
+                _HeroSection(),
+                SizedBox(height: 16),
+                _QuickPills(),
+                SizedBox(height: 24),
+                _PetaSection(),
+                SizedBox(height: 24),
+                _UnggulanSection(),
+                SizedBox(height: 28),
+                _EventSection(),
+                SizedBox(height: 28),
+                KamaimoFooter(),
+                KamaimoNavClearance(),
+              ],
+            ),
           ),
         ],
       ),
@@ -199,111 +176,41 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 
-// ─── Nav Bar Delegate (sticky) ────────────────────────────────────────────────
+// ─── Navbar (sticky, gaya kaca — dipakai beranda & destinasi) ─────────────────
 
-class _NavBarDelegate extends SliverPersistentHeaderDelegate {
-  final String locale;
-  final VoidCallback onToggleLocale;
+class KamaimoBarDelegate extends SliverPersistentHeaderDelegate {
+  final bool showToggle;
 
-  const _NavBarDelegate({required this.locale, required this.onToggleLocale});
+  const KamaimoBarDelegate({this.showToggle = true});
 
   @override
-  double get minExtent => 64;
+  double get minExtent => 76;
   @override
-  double get maxExtent => 64;
+  double get maxExtent => 76;
 
   @override
   Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
-    return Container(
-      height: 64,
-      decoration: BoxDecoration(
-        color: AppColors.surface,
-        border: const Border(
-          bottom: BorderSide(color: AppColors.border, width: 1),
-        ),
-      ),
-      child: SafeArea(
-        bottom: false,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              // Logo BERANI KAMAIMO
-              Row(
+    return ClipRect(
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+        child: Container(
+          height: 76,
+          decoration: const BoxDecoration(
+            color: Color(0x33F6F8F5),
+            border: Border(bottom: BorderSide(color: Color(0xFFE7ECE6))),
+          ),
+          child: SafeArea(
+            bottom: false,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Container(
-                    width: 26,
-                    height: 26,
-                    decoration: BoxDecoration(
-                      color: AppColors.pine600,
-                      borderRadius: BorderRadius.circular(5.65),
-                    ),
-                    child: const Icon(
-                      Icons.landscape_rounded,
-                      color: Colors.white,
-                      size: 16,
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'BERANI',
-                        style: TextStyle(
-                          fontSize: 8,
-                          fontWeight: FontWeight.w900,
-                          color: AppColors.pine900,
-                          letterSpacing: 0.5,
-                          height: 1.2,
-                        ),
-                      ),
-                      Text(
-                        'KAMAIMO',
-                        style: TextStyle(
-                          fontSize: 7,
-                          fontWeight: FontWeight.w900,
-                          color: AppColors.pine500,
-                          letterSpacing: 0.5,
-                          height: 1.2,
-                        ),
-                      ),
-                    ],
-                  ),
+                  const _KamaimoLogoWidget(),
+                  if (showToggle) const _LanguageToggle(),
                 ],
               ),
-              // Language Pill Switcher (M1-1.6)
-              GestureDetector(
-                onTap: onToggleLocale,
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.9),
-                    borderRadius: BorderRadius.circular(9999),
-                    border: Border.all(
-                      color: AppColors.border.withOpacity(0.6),
-                    ),
-                    boxShadow: const [
-                      BoxShadow(
-                        color: Color(0x0D000000),
-                        blurRadius: 2,
-                        offset: Offset(0, 1),
-                      ),
-                    ],
-                  ),
-                  padding: const EdgeInsets.all(8),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      _LangPill(label: 'ID', active: locale == 'ID'),
-                      const SizedBox(width: 4),
-                      _LangPill(label: 'EN', active: locale == 'EN'),
-                    ],
-                  ),
-                ),
-              ),
-            ],
+            ),
           ),
         ),
       ),
@@ -311,30 +218,114 @@ class _NavBarDelegate extends SliverPersistentHeaderDelegate {
   }
 
   @override
-  bool shouldRebuild(_NavBarDelegate old) =>
-      old.locale != locale;
+  bool shouldRebuild(KamaimoBarDelegate old) => false;
 }
 
-class _LangPill extends StatelessWidget {
-  final String label;
-  final bool active;
-  const _LangPill({required this.label, required this.active});
+class _KamaimoLogoWidget extends StatelessWidget {
+  const _KamaimoLogoWidget();
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Container(
+          width: 38,
+          height: 38,
+          decoration: BoxDecoration(
+            color: AppColors.pine600,
+            borderRadius: BorderRadius.circular(8.4),
+          ),
+          child: const Icon(
+            Icons.landscape_rounded,
+            color: Colors.white,
+            size: 23,
+          ),
+        ),
+        const SizedBox(width: 10),
+        const Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'BERANI',
+              style: TextStyle(
+                fontSize: 13,
+                fontWeight: FontWeight.w800,
+                color: AppColors.pine900,
+                letterSpacing: 1.1,
+                height: 1.2,
+                fontFamily: 'PlusJakartaSans',
+              ),
+            ),
+            Text(
+              'KAMAIMO',
+              style: TextStyle(
+                fontSize: 12.5,
+                fontWeight: FontWeight.w700,
+                color: AppColors.pine500,
+                letterSpacing: 1.1,
+                height: 1.2,
+                fontFamily: 'PlusJakartaSans',
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+class _LanguageToggle extends StatefulWidget {
+  const _LanguageToggle();
+
+  @override
+  State<_LanguageToggle> createState() => _LanguageToggleState();
+}
+
+class _LanguageToggleState extends State<_LanguageToggle> {
+  String _lang = 'ID';
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      height: 46,
+      padding: const EdgeInsets.all(5),
       decoration: BoxDecoration(
-        color: active ? AppColors.pine800 : Colors.transparent,
+        color: Colors.white,
         borderRadius: BorderRadius.circular(9999),
+        border: Border.all(color: AppColors.border),
       ),
-      child: Text(
-        label,
-        style: TextStyle(
-          fontSize: 12,
-          fontWeight: FontWeight.bold,
-          color: active ? Colors.white : AppColors.textMuted,
-          fontFamily: 'PlusJakartaSans',
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          _tab('ID'),
+          const SizedBox(width: 3),
+          _tab('EN'),
+        ],
+      ),
+    );
+  }
+
+  Widget _tab(String label) {
+    final active = _lang == label;
+    return GestureDetector(
+      onTap: () => setState(() => _lang = label),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 15),
+        decoration: BoxDecoration(
+          color: active ? AppColors.pine800 : Colors.transparent,
+          borderRadius: BorderRadius.circular(9999),
+        ),
+        alignment: Alignment.center,
+        height: 36,
+        child: Text(
+          label,
+          style: TextStyle(
+            fontSize: 14,
+            fontWeight: active ? FontWeight.w700 : FontWeight.w600,
+            color: active ? Colors.white : AppColors.textMuted,
+            fontFamily: 'PlusJakartaSans',
+          ),
         ),
       ),
     );
@@ -344,134 +335,126 @@ class _LangPill extends StatelessWidget {
 // ─── Hero Section ─────────────────────────────────────────────────────────────
 
 class _HeroSection extends StatelessWidget {
-  final String locale;
-  const _HeroSection({required this.locale});
+  const _HeroSection();
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 17, 16, 0),
-      child: Container(
-        decoration: BoxDecoration(
-          gradient: const LinearGradient(
-            colors: [Color(0xB2ECFDF5), Color(0xFFF2F4EE), Colors.white],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            stops: [0.0, 0.5, 1.0],
-          ),
-          borderRadius: BorderRadius.circular(28),
-          border: Border.all(color: AppColors.border.withOpacity(0.7)),
-          boxShadow: const [
-            BoxShadow(
-              color: Color(0x122E5C43),
-              blurRadius: 24,
-              offset: Offset(0, 8),
-              spreadRadius: -4,
-            ),
-          ],
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(21),
-          child: Column(
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16),
+      padding: const EdgeInsets.fromLTRB(20, 20, 12, 16),
+      decoration: BoxDecoration(
+        gradient: AppColors.heroGradient,
+        borderRadius: BorderRadius.circular(28),
+      ),
+      child: const Column(
+        children: [
+          Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Heading
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        RichText(
-                          text: const TextSpan(
-                            style: TextStyle(
-                              fontSize: 26,
-                              fontWeight: FontWeight.w800,
-                              color: AppColors.pine900,
-                              letterSpacing: -0.65,
-                              height: 1.25,
-                            ),
-                            children: [
-                              TextSpan(text: 'Jelajahi Surga\nTersembunyi di \n'),
-                              TextSpan(
-                                text: 'Jantung Sulawesi',
-                                style: TextStyle(color: AppColors.pine700),
-                              ),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        const Text(
-                          'Temukan pesona bahari kristal, labirin karst megah, '
-                          'dan keagungan peradaban megalitikum tertua di Nusantara.',
-                          style: TextStyle(
-                            fontSize: 13,
-                            fontWeight: FontWeight.w500,
-                            color: AppColors.textSecondary,
-                            height: 1.62,
-                          ),
-                        ),
-                      ],
-                    ),
+              Expanded(
+                child: Text(
+                  'Jelajahi Surga\nTersembunyi di\nJantung Sulawesi',
+                  style: TextStyle(
+                    fontSize: 26,
+                    fontWeight: FontWeight.w800,
+                    color: AppColors.pine900,
+                    height: 1.25,
+                    letterSpacing: -0.65,
+                    fontFamily: 'PlusJakartaSans',
                   ),
-                  const SizedBox(width: 8),
-                  // Weather Card
-                  _WeatherCard(),
-                ],
+                ),
               ),
-              const SizedBox(height: 16),
-              // Search Bar (kandidat A — secret admin code masuk sini, M1-1.5)
-              _SearchBar(),
+              SizedBox(width: 8),
+              _WeatherWidget(),
             ],
           ),
-        ),
+          SizedBox(height: 12),
+          Align(
+            alignment: Alignment.centerLeft,
+            child: Text(
+              'Temukan pesona bahari kristal, labirin karst megah,\ndan keagungan peradaban megalitikum tertua di\nNusantara.',
+              style: TextStyle(
+                fontSize: 13,
+                fontWeight: FontWeight.w500,
+                color: AppColors.textBody,
+                height: 21.13 / 13,
+                fontFamily: 'PlusJakartaSans',
+              ),
+            ),
+          ),
+          SizedBox(height: 14),
+          _SearchBar(),
+        ],
       ),
     );
   }
 }
 
-class _WeatherCard extends StatelessWidget {
+class _WeatherWidget extends StatelessWidget {
+  const _WeatherWidget();
+
   @override
   Widget build(BuildContext context) {
     return Container(
       width: 96,
-      height: 81,
+      height: 88,
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 7),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.9),
+        color: Colors.white.withValues(alpha: 0.9),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.emerald100.withOpacity(0.8)),
       ),
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: const [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: 26,
+            height: 26,
+            decoration: BoxDecoration(
+              color: const Color(0xFFFEF3C7),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: const Icon(
+              Icons.wb_sunny_rounded,
+              color: AppColors.warning,
+              size: 15,
+            ),
+          ),
+          const Spacer(),
+          const Text(
+            '29°C',
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w800,
+              color: AppColors.pine900,
+              fontFamily: 'PlusJakartaSans',
+            ),
+          ),
+          const SizedBox(height: 1),
+          const Row(
             children: [
-              Icon(Icons.wb_sunny_rounded, color: Color(0xFFF59E0B), size: 18),
-              SizedBox(width: 4),
+              Icon(Icons.place_rounded, color: AppColors.pine500, size: 9),
+              SizedBox(width: 3),
               Text(
-                '29°C',
+                'Palu',
                 style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w800,
-                  color: Color(0xFF0F172A),
+                  fontSize: 9,
+                  fontWeight: FontWeight.w700,
+                  color: AppColors.pine900,
+                  fontFamily: 'PlusJakartaSans',
                 ),
               ),
             ],
           ),
-          SizedBox(height: 4),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(Icons.location_on_rounded, size: 10, color: AppColors.emerald600),
-              SizedBox(width: 2),
-              Text('Palu', style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: AppColors.emerald600)),
-            ],
-          ),
-          Text(
+          const Text(
             'Cerah Berawan',
-            style: TextStyle(fontSize: 9, color: Color(0xFF64748B), fontWeight: FontWeight.w500),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(
+              fontSize: 9,
+              fontWeight: FontWeight.w500,
+              color: AppColors.textTertiary,
+              fontFamily: 'PlusJakartaSans',
+            ),
           ),
         ],
       ),
@@ -480,6 +463,8 @@ class _WeatherCard extends StatelessWidget {
 }
 
 class _SearchBar extends StatefulWidget {
+  const _SearchBar();
+
   @override
   State<_SearchBar> createState() => _SearchBarState();
 }
@@ -487,8 +472,8 @@ class _SearchBar extends StatefulWidget {
 class _SearchBarState extends State<_SearchBar> {
   final TextEditingController _ctrl = TextEditingController();
 
-  // Kandidat A: ketik kode rahasia untuk masuk mode admin (M1-1.5 / Keputusan #4)
-  static const String _secretCode = 'adminBK2025'; // ponytail: pindah ke env/config saat M3
+  // Kandidat A pintu admin: ketik kode rahasia di pencarian (PRD PRD §6.3)
+  static const String _secretCode = 'adminBK2025'; // ponytail: pindah ke config saat M3
 
   @override
   void dispose() {
@@ -499,9 +484,8 @@ class _SearchBarState extends State<_SearchBar> {
   void _onSubmit(String value) {
     if (value.trim() == _secretCode) {
       _ctrl.clear();
-      // M3: Navigator.pushNamed(context, AppConstants.routeAdminLogin);
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Mode admin: segera diaktifkan di M3')),
+        const SnackBar(content: Text('Mode admin: akan aktif di M3')),
       );
     }
   }
@@ -510,338 +494,255 @@ class _SearchBarState extends State<_SearchBar> {
   Widget build(BuildContext context) {
     return Container(
       height: 46,
+      padding: const EdgeInsets.symmetric(horizontal: 14),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(9999),
-        border: Border.all(color: AppColors.border),
+        boxShadow: AppColors.shadowCard,
       ),
       child: Row(
         children: [
-          const SizedBox(width: 14),
           const Icon(Icons.search_rounded, color: AppColors.textTertiary, size: 18),
-          const SizedBox(width: 8),
+          const SizedBox(width: 10),
           Expanded(
             child: TextField(
               controller: _ctrl,
               onSubmitted: _onSubmit,
-              style: const TextStyle(fontSize: 11, color: AppColors.textPrimary),
+              style: const TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w500,
+                color: AppColors.textPrimary,
+                fontFamily: 'PlusJakartaSans',
+              ),
               decoration: const InputDecoration(
                 border: InputBorder.none,
                 hintText: 'Cari destinasi atau kabupaten...',
-                hintStyle: TextStyle(fontSize: 11, color: AppColors.textTertiary),
+                hintStyle: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w500,
+                  color: AppColors.textTertiary,
+                  fontFamily: 'PlusJakartaSans',
+                ),
                 isDense: true,
                 contentPadding: EdgeInsets.zero,
               ),
             ),
           ),
-          const SizedBox(width: 8),
         ],
       ),
     );
   }
 }
 
-// ─── Quick Pill Filters ───────────────────────────────────────────────────────
+// ─── Quick Pills ──────────────────────────────────────────────────────────────
 
-class _QuickFilters extends StatefulWidget {
+class _QuickPills extends StatefulWidget {
+  const _QuickPills();
+
   @override
-  State<_QuickFilters> createState() => _QuickFiltersState();
+  State<_QuickPills> createState() => _QuickPillsState();
 }
 
-class _QuickFiltersState extends State<_QuickFilters> {
+class _QuickPillsState extends State<_QuickPills> {
   int _selected = 0;
-  static const _filters = ['Semua', 'Bahari & Karst', 'Megalitikum', 'Danau & Air Terjun'];
+
+  static const _pills = [
+    (icon: Icons.grid_view_rounded, label: 'Semua'),
+    (icon: Icons.phishing, label: 'Bahari & Karst'),
+    (icon: Icons.account_balance_rounded, label: 'Megalitikum'),
+    (icon: Icons.water_drop_rounded, label: 'Danau & Air Terjun'),
+  ];
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 24, 0, 0),
-      child: SizedBox(
-        height: 42,
-        child: ListView.separated(
-          scrollDirection: Axis.horizontal,
-          itemCount: _filters.length,
-          separatorBuilder: (_, __) => const SizedBox(width: 8),
-          itemBuilder: (ctx, i) {
-            final active = i == _selected;
-            return GestureDetector(
-              onTap: () => setState(() => _selected = i),
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                decoration: BoxDecoration(
-                  color: active ? AppColors.pine700 : Colors.white,
-                  borderRadius: BorderRadius.circular(9999),
-                  border: active ? null : Border.all(color: AppColors.border),
-                ),
-                alignment: Alignment.center,
-                child: Text(
-                  _filters[i],
-                  style: TextStyle(
-                    fontSize: 12,
-                    fontWeight: active ? FontWeight.bold : FontWeight.w600,
-                    color: active ? Colors.white : AppColors.pine900,
-                  ),
-                ),
+    return SizedBox(
+      height: 34,
+      child: ListView.separated(
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        itemCount: _pills.length,
+        separatorBuilder: (_, _) => const SizedBox(width: 8),
+        itemBuilder: (ctx, i) {
+          final active = i == _selected;
+          return GestureDetector(
+            onTap: () => setState(() => _selected = i),
+            child: Container(
+              height: 33,
+              padding: const EdgeInsets.symmetric(horizontal: 14),
+              decoration: BoxDecoration(
+                color: active ? AppColors.pine700 : Colors.white,
+                borderRadius: BorderRadius.circular(9999),
+                border: active ? null : Border.all(color: AppColors.border),
               ),
-            );
-          },
-        ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    _pills[i].icon,
+                    size: 14,
+                    color: active ? Colors.white : AppColors.pine500,
+                  ),
+                  const SizedBox(width: 7),
+                  Text(
+                    _pills[i].label,
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: active ? FontWeight.w700 : FontWeight.w600,
+                      color: active ? Colors.white : AppColors.pine900,
+                      fontFamily: 'PlusJakartaSans',
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
       ),
     );
   }
 }
 
-// ─── Peta Section (M1-2: placeholder, flutter_map di M1-2.x) ─────────────────
+// ─── Peta Interaktif ──────────────────────────────────────────────────────────
 
-class _PetaSection extends StatefulWidget {
-  @override
-  State<_PetaSection> createState() => _PetaSectionState();
-}
-
-class _PetaSectionState extends State<_PetaSection> {
-  int _kabupatenIndex = 0;
-  static const _kabupaten = ['Semua (43)', 'Banggai (14)', 'Poso (11)', 'Morowali (9)', 'Palu & Sigi (9)'];
+class _PetaSection extends StatelessWidget {
+  const _PetaSection();
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 20, 16, 0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Header
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Padding(
+          padding: EdgeInsets.symmetric(horizontal: 16),
+          child: Text(
+            'Peta Interaktif Wisata',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w800,
+              color: AppColors.pine900,
+              letterSpacing: -0.45,
+              fontFamily: 'PlusJakartaSans',
+            ),
+          ),
+        ),
+        const SizedBox(height: 14),
+        const _KabupatenChips(),
+        const SizedBox(height: 12),
+        Container(
+          margin: const EdgeInsets.symmetric(horizontal: 16),
+          height: 320,
+          decoration: BoxDecoration(
+            color: AppColors.mapBackground,
+            borderRadius: BorderRadius.circular(26),
+            boxShadow: AppColors.shadowCard,
+          ),
+          child: Stack(
             children: [
-              const Text(
-                'Peta Interaktif Desa Wisata',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w800,
-                  color: AppColors.pine900,
-                  letterSpacing: -0.45,
+              // ponytail: ilustrasi peta statis dari Figma — M2 ganti flutter_map + CartoDB tiles
+              Positioned.fill(
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(26),
+                  child: Image.asset(
+                    'assets/images/beranda/peta_placeholder.png',
+                    fit: BoxFit.cover,
+                    alignment: Alignment.topCenter,
+                  ),
                 ),
               ),
-              Container(
-                height: 33,
-                padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 5),
-                decoration: BoxDecoration(
-                  color: AppColors.emerald50,
-                  borderRadius: BorderRadius.circular(9999),
-                  border: Border.all(color: AppColors.emerald100),
-                ),
-                child: const Row(
-                  children: [
-                    Icon(Icons.near_me_rounded, size: 12, color: AppColors.emerald600),
-                    SizedBox(width: 5),
-                    Text(
-                      '12 di Sekitarmu',
-                      style: TextStyle(
-                        fontSize: 11,
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.emerald600,
-                      ),
-                    ),
-                  ],
-                ),
+              Positioned(
+                left: 11,
+                right: 11,
+                bottom: 8,
+                child: _DesaCard(),
               ),
             ],
           ),
-          const SizedBox(height: 12),
-          // Filter kabupaten
-          SizedBox(
-            height: 31,
-            child: ListView.separated(
-              scrollDirection: Axis.horizontal,
-              itemCount: _kabupaten.length,
-              separatorBuilder: (_, __) => const SizedBox(width: 8),
-              itemBuilder: (ctx, i) {
-                final active = i == _kabupatenIndex;
-                return GestureDetector(
-                  onTap: () => setState(() => _kabupatenIndex = i),
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                    decoration: BoxDecoration(
-                      color: active ? AppColors.pine700 : Colors.white,
-                      borderRadius: BorderRadius.circular(9999),
-                      border: active ? null : Border.all(color: AppColors.border),
-                    ),
-                    alignment: Alignment.center,
-                    child: Text(
-                      _kabupaten[i],
-                      style: TextStyle(
-                        fontSize: 11,
-                        fontWeight: FontWeight.bold,
-                        color: active ? Colors.white : AppColors.pine900,
-                      ),
-                    ),
-                  ),
-                );
-              },
-            ),
-          ),
-          const SizedBox(height: 12),
-          // Peta Placeholder (M1-2: ganti dengan flutter_map)
-          Container(
-            height: 320,
-            decoration: BoxDecoration(
-              color: const Color(0xFFEAF2EB),
-              borderRadius: BorderRadius.circular(26),
-              border: Border.all(color: AppColors.border),
-              boxShadow: const [
-                BoxShadow(
-                  color: Color(0x141D3A30),
-                  blurRadius: 32,
-                  offset: Offset(0, 12),
-                  spreadRadius: -6,
-                ),
-              ],
-            ),
-            child: Stack(
-              children: [
-                // Placeholder background
-                Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(Icons.map_outlined, size: 48, color: AppColors.pine500.withOpacity(0.4)),
-                      const SizedBox(height: 8),
-                      Text(
-                        'Peta Desa Wisata Sulteng',
-                        style: TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.pine500.withOpacity(0.6),
-                        ),
-                      ),
-                      // ponytail: tambah flutter_map ^6.x saat M1-2; CartoDB Light tile layer
-                    ],
-                  ),
-                ),
-                // Legend (kiri bawah)
-                Positioned(
-                  left: 10,
-                  top: 10,
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                    decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.95),
-                      borderRadius: BorderRadius.circular(9999),
-                      border: Border.all(color: AppColors.border),
-                    ),
-                    child: const Row(
-                      children: [
-                        _LegendDot(color: AppColors.emerald500, label: 'Unggulan'),
-                        SizedBox(width: 8),
-                        _LegendDot(color: Color(0xFF3B82F6), label: 'Wisata Alam'),
-                        SizedBox(width: 8),
-                        _LegendDot(color: Color(0xFFF59E0B), label: 'Budaya'),
-                      ],
-                    ),
-                  ),
-                ),
-                // Zoom controls (kanan atas)
-                Positioned(
-                  right: 10,
-                  top: 10,
-                  child: Column(
-                    children: [
-                      _MapButton(icon: Icons.add),
-                      const SizedBox(height: 6),
-                      _MapButton(icon: Icons.remove),
-                      const SizedBox(height: 6),
-                      _MapButton(icon: Icons.my_location_rounded),
-                    ],
-                  ),
-                ),
-                // Card desa aktif (bawah)
-                Positioned(
-                  left: 10,
-                  right: 10,
-                  bottom: 10,
-                  child: _DesaActiveCard(),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _LegendDot extends StatelessWidget {
-  final Color color;
-  final String label;
-  const _LegendDot({required this.color, required this.label});
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Container(
-          width: 8,
-          height: 8,
-          decoration: BoxDecoration(color: color, shape: BoxShape.circle),
         ),
-        const SizedBox(width: 4),
-        Text(label, style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: AppColors.pine900)),
       ],
     );
   }
 }
 
-class _MapButton extends StatelessWidget {
-  final IconData icon;
-  const _MapButton({required this.icon});
+class _KabupatenChips extends StatefulWidget {
+  const _KabupatenChips();
+
+  @override
+  State<_KabupatenChips> createState() => _KabupatenChipsState();
+}
+
+class _KabupatenChipsState extends State<_KabupatenChips> {
+  int _selected = 0;
+
+  static const _chips = [
+    'Semua (43)',
+    'Banggai (14)',
+    'Poso (11)',
+    'Morowali (9)',
+    'Palu & Sigi (9)',
+  ];
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 32,
-      height: 32,
-      decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.95),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppColors.border),
+    return SizedBox(
+      height: 27,
+      child: ListView.separated(
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        itemCount: _chips.length,
+        separatorBuilder: (_, _) => const SizedBox(width: 8),
+        itemBuilder: (ctx, i) {
+          final active = i == _selected;
+          return GestureDetector(
+            onTap: () => setState(() => _selected = i),
+            child: Container(
+              height: 25,
+              padding: const EdgeInsets.symmetric(horizontal: 12),
+              decoration: BoxDecoration(
+                color: active ? AppColors.pine700 : Colors.white,
+                borderRadius: BorderRadius.circular(9999),
+                border: active ? null : Border.all(color: AppColors.border),
+              ),
+              alignment: Alignment.center,
+              child: Text(
+                _chips[i],
+                style: TextStyle(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w700,
+                  color: active ? Colors.white : AppColors.pine900,
+                  fontFamily: 'PlusJakartaSans',
+                ),
+              ),
+            ),
+          );
+        },
       ),
-      child: Icon(icon, size: 16, color: AppColors.pine900),
     );
   }
 }
 
-class _DesaActiveCard extends StatelessWidget {
+class _DesaCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(11),
+      height: 78,
+      padding: const EdgeInsets.fromLTRB(12, 11, 11, 11),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.95),
+        color: Colors.white.withValues(alpha: 0.95),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.border),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x1E15442D),
-            blurRadius: 40,
-            offset: Offset(0, 16),
-            spreadRadius: -8,
-          ),
-        ],
+        border: Border.all(color: AppColors.borderLight),
       ),
       child: Row(
         children: [
-          // Foto thumbnail
-          Container(
-            width: 56,
-            height: 56,
-            decoration: BoxDecoration(
-              color: AppColors.pine500.withOpacity(0.3),
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: AppColors.borderLight),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(12),
+            child: Image.asset(
+              'assets/images/beranda/thumb_luk_panenteng.png',
+              width: 56,
+              height: 56,
+              fit: BoxFit.cover,
             ),
-            child: const Icon(Icons.landscape, color: AppColors.pine500, size: 28),
           ),
-          const SizedBox(width: 12),
+          const SizedBox(width: 10),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -855,391 +756,85 @@ class _DesaActiveCard extends StatelessWidget {
                         borderRadius: BorderRadius.circular(6),
                       ),
                       child: const Text(
-                        'DESA\nUNGGULAN',
+                        'DESA UNGGULAN',
                         style: TextStyle(
                           fontSize: 9,
                           fontWeight: FontWeight.w900,
                           color: AppColors.emerald600,
-                          letterSpacing: 0.225,
-                          height: 1.1,
+                          letterSpacing: 0.2,
+                          fontFamily: 'PlusJakartaSans',
                         ),
                       ),
                     ),
                     const SizedBox(width: 6),
-                    const Icon(Icons.star_rounded, size: 12, color: AppColors.pine500),
+                    const Icon(Icons.star_rounded, color: AppColors.warning, size: 11),
                     const SizedBox(width: 2),
-                    const Text('4.9', style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: AppColors.pine500)),
-                    const SizedBox(width: 6),
+                    const Text(
+                      '4.9',
+                      style: TextStyle(
+                        fontSize: 10,
+                        fontWeight: FontWeight.w700,
+                        color: AppColors.pine500,
+                        fontFamily: 'PlusJakartaSans',
+                      ),
+                    ),
+                    const SizedBox(width: 5),
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 6),
+                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1),
                       decoration: BoxDecoration(
-                        color: AppColors.pine700.withOpacity(0.1),
+                        color: AppColors.pine700.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(9999),
                       ),
                       child: const Text(
                         '2.4 km',
-                        style: TextStyle(fontSize: 9, fontWeight: FontWeight.bold, color: AppColors.pine700),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 2),
-                const Text(
-                  'Desa Luk Panenteng',
-                  style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: AppColors.pine900),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(width: 8),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-            decoration: BoxDecoration(
-              color: AppColors.pine700,
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: const Row(
-              children: [
-                Text('Buka', style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.white)),
-                SizedBox(width: 4),
-                Icon(Icons.chevron_right_rounded, color: Colors.white, size: 12),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-// ─── Carousel Wisata Unggulan ─────────────────────────────────────────────────
-
-class _CarouselWisata extends StatefulWidget {
-  @override
-  State<_CarouselWisata> createState() => _CarouselWisataState();
-}
-
-class _CarouselWisataState extends State<_CarouselWisata> {
-  final _pageCtrl = PageController(viewportFraction: 0.75);
-  int _page = 0;
-
-  static const _items = [
-    (
-      kabupaten: 'BANGGAI KEPULAUAN',
-      nama: 'Luk Panenteng & Danau Paisu Pok',
-      desc: 'Air danau sejernih kaca dengan vegetasi hutan…',
-      badge: 'KOLAM KACA',
-      rating: '4.9',
-      ulasan: '1.4k ulasan',
-      harga: 'Rp 15.000',
-      satuan: '/orang',
-    ),
-    (
-      kabupaten: 'MOROWALI',
-      nama: 'Kepulauan Sombori',
-      desc: 'Karst megah, tebing cadas, & laguna toska.',
-      badge: 'THE SECRET PARADISE',
-      rating: '4.95',
-      ulasan: '930 ulasan',
-      harga: 'Rp 350.000',
-      satuan: '/tur',
-    ),
-    (
-      kabupaten: 'POSO • TENTENA',
-      nama: 'Danau Poso & Pasir Emas',
-      desc: 'Danau purba ketiga terbesar dengan pasir…',
-      badge: 'PASIR EMAS TENTENA',
-      rating: '4.88',
-      ulasan: '2.1k ulasan',
-      harga: 'Rp 10.000',
-      satuan: '/orang',
-    ),
-  ];
-
-  @override
-  void dispose() {
-    _pageCtrl.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 24),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: const [
-                    Row(
-                      children: [
-                        Icon(Icons.star_rounded, size: 12, color: AppColors.pine500),
-                        SizedBox(width: 6),
-                        Text(
-                          'PILIHAN TERBAIK',
-                          style: TextStyle(
-                            fontSize: 10,
-                            fontWeight: FontWeight.w800,
-                            color: AppColors.pine500,
-                            letterSpacing: 0.5,
-                          ),
+                        style: TextStyle(
+                          fontSize: 9,
+                          fontWeight: FontWeight.w700,
+                          color: AppColors.pine700,
+                          fontFamily: 'PlusJakartaSans',
                         ),
-                      ],
-                    ),
-                    SizedBox(height: 2),
-                    Text(
-                      'Wisata Unggulan Sulteng',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w800,
-                        color: AppColors.pine900,
-                        letterSpacing: -0.45,
-                      ),
-                    ),
-                  ],
-                ),
-                Row(
-                  children: const [
-                    Text('Semua', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: AppColors.pine700)),
-                    SizedBox(width: 2),
-                    Icon(Icons.chevron_right_rounded, size: 14, color: AppColors.pine700),
-                  ],
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 12),
-          SizedBox(
-            height: 460,
-            child: PageView.builder(
-              controller: _pageCtrl,
-              itemCount: _items.length,
-              onPageChanged: (i) => setState(() => _page = i),
-              itemBuilder: (ctx, i) {
-                final item = _items[i];
-                final active = i == _page;
-                return AnimatedContainer(
-                  duration: const Duration(milliseconds: 200),
-                  margin: EdgeInsets.only(
-                    left: i == 0 ? 16 : 8,
-                    right: i == _items.length - 1 ? 16 : 8,
-                    bottom: active ? 0 : 8,
-                    top: active ? 0 : 8,
-                  ),
-                  child: _WisataCard(item: item),
-                );
-              },
-            ),
-          ),
-          // Dot indicator
-          const SizedBox(height: 12),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: List.generate(_items.length, (i) {
-              return Container(
-                width: i == _page ? 16 : 6,
-                height: 6,
-                margin: const EdgeInsets.symmetric(horizontal: 3),
-                decoration: BoxDecoration(
-                  color: i == _page ? AppColors.pine700 : AppColors.border,
-                  borderRadius: BorderRadius.circular(3),
-                ),
-              );
-            }),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _WisataCard extends StatelessWidget {
-  final ({
-    String kabupaten,
-    String nama,
-    String desc,
-    String badge,
-    String rating,
-    String ulasan,
-    String harga,
-    String satuan,
-  }) item;
-
-  const _WisataCard({required this.item});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: AppColors.borderLight),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x141D3A30),
-            blurRadius: 32,
-            offset: Offset(0, 12),
-            spreadRadius: -6,
-          ),
-        ],
-      ),
-      clipBehavior: Clip.hardEdge,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Image area placeholder
-          Expanded(
-            child: Stack(
-              fit: StackFit.expand,
-              children: [
-                Container(
-                  color: AppColors.pine500.withOpacity(0.25),
-                  child: const Center(
-                    child: Icon(Icons.landscape, size: 64, color: AppColors.pine500),
-                  ),
-                ),
-                // Gradient overlay
-                const DecoratedBox(
-                  decoration: BoxDecoration(gradient: AppColors.cardImageOverlay),
-                ),
-                // Badge top-left
-                Positioned(
-                  top: 14,
-                  left: 14,
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                    decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.95),
-                      borderRadius: BorderRadius.circular(9999),
-                    ),
-                    child: Text(
-                      item.badge,
-                      style: const TextStyle(
-                        fontSize: 10,
-                        fontWeight: FontWeight.w800,
-                        color: AppColors.pine700,
-                        letterSpacing: 0.25,
-                      ),
-                    ),
-                  ),
-                ),
-                // Rating bottom-left
-                Positioned(
-                  bottom: 14,
-                  left: 14,
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                    decoration: BoxDecoration(
-                      color: Colors.black.withOpacity(0.55),
-                      borderRadius: BorderRadius.circular(9999),
-                    ),
-                    child: Row(
-                      children: [
-                        const Icon(Icons.star_rounded, size: 12, color: Colors.amber),
-                        const SizedBox(width: 4),
-                        Text(
-                          item.rating,
-                          style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.white),
-                        ),
-                        const SizedBox(width: 4),
-                        Text(
-                          '(${item.ulasan})',
-                          style: const TextStyle(fontSize: 10, color: Color(0xB3FFFFFF)),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          // Info area
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    const Icon(Icons.location_on_rounded, size: 12, color: AppColors.pine500),
-                    const SizedBox(width: 4),
-                    Text(
-                      item.kabupaten,
-                      style: const TextStyle(
-                        fontSize: 10,
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.pine500,
-                        letterSpacing: 0.5,
                       ),
                     ),
                   ],
                 ),
                 const SizedBox(height: 4),
-                Text(
-                  item.nama,
-                  style: const TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.bold,
+                const Text(
+                  'Desa Luk Panenteng',
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w700,
                     color: AppColors.pine900,
+                    fontFamily: 'PlusJakartaSans',
                   ),
                 ),
-                const SizedBox(height: 2),
-                Text(
-                  item.desc,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(fontSize: 11, color: AppColors.textSecondary),
-                ),
-                const SizedBox(height: 11),
-                const Divider(color: AppColors.borderLight, height: 1),
-                const SizedBox(height: 11),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          'MULAI DARI',
-                          style: TextStyle(fontSize: 9, fontWeight: FontWeight.bold, color: AppColors.textTertiary, letterSpacing: 0.5),
-                        ),
-                        Row(
-                          children: [
-                            Text(
-                              item.harga,
-                              style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w900, color: AppColors.pine700),
-                            ),
-                            Text(
-                              item.satuan,
-                              style: const TextStyle(fontSize: 9, color: AppColors.textTertiary),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-                      decoration: BoxDecoration(
-                        color: AppColors.pine700,
-                        borderRadius: BorderRadius.circular(9999),
-                      ),
-                      child: const Row(
-                        children: [
-                          Text('Detail', style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.white)),
-                          SizedBox(width: 4),
-                          Icon(Icons.chevron_right_rounded, color: Colors.white, size: 12),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
               ],
+            ),
+          ),
+          const SizedBox(width: 8),
+          GestureDetector(
+            onTap: () {}, // ponytail: M2 → push DetailDesa dari marker
+            child: Container(
+              width: 62,
+              height: 28,
+              decoration: BoxDecoration(
+                color: AppColors.pine700,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: const Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'Buka',
+                    style: TextStyle(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w700,
+                      color: Colors.white,
+                      fontFamily: 'PlusJakartaSans',
+                    ),
+                  ),
+                  Icon(Icons.arrow_forward_rounded, size: 9, color: Colors.white),
+                ],
+              ),
             ),
           ),
         ],
@@ -1248,75 +843,561 @@ class _WisataCard extends StatelessWidget {
   }
 }
 
-// ─── Event Section ─────────────────────────────────────────────────────────────
+// ─── Wisata Unggulan (cover-flow carousel) ────────────────────────────────────
 
-class _EventSection extends StatelessWidget {
+class _WisataData {
+  final String? foto;
+  final String badge;
+  final Color? badgeColor;
+  final String kabupaten;
+  final String nama;
+  final String deskripsi;
+  final String labelHarga;
+  final String harga;
+  final String satuan;
+  final String rating;
+  final String ulasan;
+
+  const _WisataData({
+    this.foto,
+    required this.badge,
+    this.badgeColor,
+    required this.kabupaten,
+    required this.nama,
+    required this.deskripsi,
+    required this.labelHarga,
+    required this.harga,
+    required this.satuan,
+    required this.rating,
+    required this.ulasan,
+  });
+}
+
+class _UnggulanSection extends StatefulWidget {
+  const _UnggulanSection();
+
+  @override
+  State<_UnggulanSection> createState() => _UnggulanState();
+}
+
+class _UnggulanState extends State<_UnggulanSection> {
+  final PageController _page = PageController(viewportFraction: 0.75);
+  int _index = 0;
+
+  static const _items = [
+    _WisataData(
+      foto: 'assets/images/beranda/kartu_kolam_kaca.png',
+      badge: 'KOLAM KACA',
+      kabupaten: 'BANGGAI KEPULAUAN',
+      nama: 'Luk Panenteng & Danau Paisu Pok',
+      deskripsi: 'Air danau sejernih kaca dengan vegetasi hutan…',
+      labelHarga: 'MULAI DARI',
+      harga: 'Rp 15.000',
+      satuan: '/orang',
+      rating: '4.9',
+      ulasan: '(1.4k ulasan)',
+    ),
+    _WisataData(
+      foto: 'assets/images/beranda/kartu_sombori.png',
+      badge: 'THE SECRET PARADISE',
+      badgeColor: AppColors.orangeBadge,
+      kabupaten: 'MOROWALI',
+      nama: 'Kepulauan Sombori',
+      deskripsi: 'Karst megah, tebing cadas, & laguna toska.',
+      labelHarga: 'PAKET TUR',
+      harga: 'Rp 350.000',
+      satuan: '/tur',
+      rating: '4.95',
+      ulasan: '',
+    ),
+    _WisataData(
+      // ponytail: belum ada foto aset Danau Poso — placeholder gradient, ganti saat data API
+      badge: 'PASIR EMAS TENTENA',
+      kabupaten: 'POSO • TENTENA',
+      nama: 'Danau Poso & Pasir Emas',
+      deskripsi: 'Danau purba ketiga terbesar dengan pasir…',
+      labelHarga: 'MULAI DARI',
+      harga: 'Rp 10.000',
+      satuan: '/orang',
+      rating: '4.88',
+      ulasan: '',
+    ),
+  ];
+
+  @override
+  void dispose() {
+    _page.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 24, 16, 0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Padding(
+          padding: EdgeInsets.symmetric(horizontal: 16),
+          child: Row(
             children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: const [
-                  Row(
-                    children: [
-                      Icon(Icons.event_rounded, size: 12, color: AppColors.pine500),
-                      SizedBox(width: 6),
-                      Text(
-                        'KARISMA EVENT NUSANTARA 2025',
-                        style: TextStyle(
-                          fontSize: 10,
-                          fontWeight: FontWeight.w800,
-                          color: AppColors.pine500,
-                          letterSpacing: 0.5,
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 2),
-                  Text(
-                    'Atraksi & Event Budaya',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w800,
-                      color: AppColors.pine900,
-                      letterSpacing: -0.45,
-                    ),
-                  ),
-                ],
-              ),
-              const Row(
-                children: [
-                  Text('Semua', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: AppColors.pine700)),
-                  Icon(Icons.chevron_right_rounded, size: 14, color: AppColors.pine700),
-                ],
+              Icon(Icons.star_rounded, color: AppColors.warning, size: 14),
+              SizedBox(width: 6),
+              Text(
+                'PILIHAN TERBAIK',
+                style: TextStyle(
+                  fontSize: 10,
+                  fontWeight: FontWeight.w800,
+                  color: AppColors.pine500,
+                  letterSpacing: 0.4,
+                  fontFamily: 'PlusJakartaSans',
+                ),
               ),
             ],
           ),
-          const SizedBox(height: 12),
-          _EventCard(
-            tanggal: '24 OKT',
-            countdown: 'H-45 Hari',
-            lokasi: 'Tentena, Poso',
-            nama: 'Festival Danau Poso ke-24',
-            desc: 'Parade budaya, tari mogele, & lomba perahu naga.',
-            color: AppColors.pine700,
+        ),
+        const SizedBox(height: 3),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Row(
+            children: [
+              const Text(
+                'Wisata Unggulan Sulteng',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w800,
+                  color: AppColors.pine900,
+                  letterSpacing: -0.45,
+                  fontFamily: 'PlusJakartaSans',
+                ),
+              ),
+              const Spacer(),
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const SemuaDestinasiScreen()),
+                  );
+                },
+                child: const Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      'Semua',
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w700,
+                        color: AppColors.pine700,
+                        fontFamily: 'PlusJakartaSans',
+                      ),
+                    ),
+                    Icon(Icons.arrow_forward_rounded, size: 13, color: AppColors.pine700),
+                  ],
+                ),
+              ),
+            ],
           ),
-          const SizedBox(height: 12),
-          _EventCard(
-            tanggal: '18 NOV',
-            countdown: 'H-70 Hari',
-            lokasi: 'Parigi Moutong',
-            nama: 'Festival Teluk Tomini (FTT)',
-            desc: 'Eksplorasi bawah laut, karnaval kostum bahari & expo UMKM.',
-            color: AppColors.pine500,
+        ),
+        const SizedBox(height: 14),
+        SizedBox(
+          height: 448,
+          child: PageView.builder(
+            controller: _page,
+            itemCount: _items.length,
+            onPageChanged: (i) => setState(() => _index = i),
+            itemBuilder: (ctx, i) => Container(
+              padding: const EdgeInsets.symmetric(horizontal: 4),
+              child: _CarouselCard(item: _items[i], active: i == _index),
+            ),
           ),
+        ),
+        const SizedBox(height: 12),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: List.generate(_items.length, (i) {
+            return Container(
+              width: 6,
+              height: 6,
+              margin: const EdgeInsets.symmetric(horizontal: 3),
+              decoration: BoxDecoration(
+                color: i == _index ? AppColors.pine700 : AppColors.border,
+                shape: BoxShape.circle,
+              ),
+            );
+          }),
+        ),
+      ],
+    );
+  }
+}
+
+class _CarouselCard extends StatelessWidget {
+  final _WisataData item;
+  final bool active;
+
+  const _CarouselCard({required this.item, required this.active});
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(24),
+          border: Border.all(color: AppColors.borderLight),
+          boxShadow: AppColors.shadowCard,
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(24),
+          child: Column(
+            children: [
+              // Foto area 144dp
+              SizedBox(
+                height: 144,
+                width: double.infinity,
+                child: Stack(
+                  children: [
+                    Positioned.fill(
+                      child: item.foto != null
+                          ? Image.asset(item.foto!, fit: BoxFit.cover)
+                          : const DecoratedBox(
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  colors: [Color(0xFF9ECAA3), Color(0xFF35644A)],
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                ),
+                              ),
+                            ),
+                    ),
+                    // Badge (menutup badge yang ter-bake di foto kartu pertama)
+                    Positioned(
+                      left: 14,
+                      top: 14,
+                      child: Container(
+                        height: 24,
+                        padding: const EdgeInsets.symmetric(horizontal: 13),
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          color: item.badgeColor != null
+                              ? item.badgeColor!.withValues(alpha: 0.9)
+                              : Colors.white.withValues(alpha: 0.95),
+                          borderRadius: BorderRadius.circular(9999),
+                        ),
+                        child: Text(
+                          item.badge,
+                          style: TextStyle(
+                            fontSize: 10,
+                            fontWeight: FontWeight.w800,
+                            color: item.badgeColor != null ? Colors.white : AppColors.pine700,
+                            letterSpacing: 0.2,
+                            fontFamily: 'PlusJakartaSans',
+                          ),
+                        ),
+                      ),
+                    ),
+                    // Rating chip menutup chip ter-bake
+                    Positioned(
+                      left: 14,
+                      bottom: 14,
+                      child: Container(
+                        height: 24,
+                        padding: const EdgeInsets.symmetric(horizontal: 10),
+                        decoration: BoxDecoration(
+                          color: Colors.black.withValues(alpha: 0.55),
+                          borderRadius: BorderRadius.circular(9999),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(Icons.star_rounded, color: AppColors.warning, size: 12),
+                            const SizedBox(width: 3),
+                            Text(
+                              item.rating,
+                              style: const TextStyle(
+                                fontSize: 11,
+                                fontWeight: FontWeight.w700,
+                                color: Colors.white,
+                                fontFamily: 'PlusJakartaSans',
+                              ),
+                            ),
+                            if (item.ulasan.isNotEmpty) ...[
+                              const SizedBox(width: 4),
+                              Text(
+                                item.ulasan,
+                                style: TextStyle(
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.w400,
+                                  color: Colors.white.withValues(alpha: 0.7),
+                                  fontFamily: 'PlusJakartaSans',
+                                ),
+                              ),
+                            ],
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              // Info area
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 12, 16, 14),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        item.kabupaten,
+                        style: const TextStyle(
+                          fontSize: 10,
+                          fontWeight: FontWeight.w700,
+                          color: AppColors.pine500,
+                          letterSpacing: 0.3,
+                          fontFamily: 'PlusJakartaSans',
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        item.nama,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w700,
+                          color: AppColors.pine900,
+                          fontFamily: 'PlusJakartaSans',
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        item.deskripsi,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w500,
+                          color: AppColors.textBody,
+                          fontFamily: 'PlusJakartaSans',
+                        ),
+                      ),
+                      const Spacer(),
+                      Container(
+                        height: 1,
+                        color: AppColors.divider,
+                      ),
+                      const SizedBox(height: 10),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  item.labelHarga,
+                                  style: const TextStyle(
+                                    fontSize: 9,
+                                    fontWeight: FontWeight.w700,
+                                    color: AppColors.textTertiary,
+                                    letterSpacing: 0.4,
+                                    fontFamily: 'PlusJakartaSans',
+                                  ),
+                                ),
+                                const SizedBox(height: 2),
+                                Row(
+                                  crossAxisAlignment: CrossAxisAlignment.baseline,
+                                  textBaseline: TextBaseline.alphabetic,
+                                  children: [
+                                    Text(
+                                      item.harga,
+                                      style: const TextStyle(
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.w900,
+                                        color: AppColors.pine700,
+                                        fontFamily: 'PlusJakartaSans',
+                                      ),
+                                    ),
+                                    Text(
+                                      item.satuan,
+                                      style: const TextStyle(
+                                        fontSize: 9,
+                                        fontWeight: FontWeight.w400,
+                                        color: AppColors.textTertiary,
+                                        fontFamily: 'PlusJakartaSans',
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                          _cardButton(),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _cardButton() {
+    if (active) {
+      // Tombol kartu aktif: pill gelap "Detail →" (87×28)
+      return Container(
+        width: 87,
+        height: 28,
+        decoration: BoxDecoration(
+          color: AppColors.pine700,
+          borderRadius: BorderRadius.circular(9999),
+        ),
+        child: const Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              'Detail',
+              style: TextStyle(
+                fontSize: 11,
+                fontWeight: FontWeight.w700,
+                color: Colors.white,
+                fontFamily: 'PlusJakartaSans',
+              ),
+            ),
+            Icon(Icons.arrow_forward_rounded, size: 9, color: Colors.white),
+          ],
+        ),
+      );
+    }
+    // Kartu tidak aktif: pill abu "Info Detail"
+    return Container(
+      width: 82,
+      height: 29,
+      decoration: BoxDecoration(
+        color: AppColors.surfaceVariantSoft,
+        borderRadius: BorderRadius.circular(9999),
+      ),
+      child: const Center(
+        child: Text(
+          'Info Detail',
+          style: TextStyle(
+            fontSize: 11,
+            fontWeight: FontWeight.w700,
+            color: AppColors.pine900,
+            fontFamily: 'PlusJakartaSans',
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// ─── Atraksi & Event ─────────────────────────────────────────────────────────
+
+class _EventData {
+  final String foto;
+  final String tanggal;
+  final String countdown;
+  final String lokasi;
+  final String nama;
+  final String deskripsi;
+
+  const _EventData({
+    required this.foto,
+    required this.tanggal,
+    required this.countdown,
+    required this.lokasi,
+    required this.nama,
+    required this.deskripsi,
+  });
+}
+
+class _EventSection extends StatelessWidget {
+  const _EventSection();
+
+  static const _events = [
+    _EventData(
+      foto: 'assets/images/beranda/thumb_event1.png',
+      tanggal: '24 OKT',
+      countdown: 'H-45 Hari',
+      lokasi: 'Tentena, Poso',
+      nama: 'Festival Danau Poso ke-24',
+      deskripsi: 'Parade budaya, tari mogele, & lomba perahu naga.',
+    ),
+    _EventData(
+      foto: 'assets/images/beranda/thumb_event2.png',
+      tanggal: '18 NOV',
+      countdown: 'H-45 Hari',
+      lokasi: 'Parigi Moutong',
+      nama: 'Festival Teluk Tomini (FTT)',
+      deskripsi: 'Eksplorasi bawah laut, karnaval kostum bahari & expo UMKM.',
+    ),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Row(
+            children: [
+              Icon(Icons.event_available_rounded, color: AppColors.pine500, size: 14),
+              SizedBox(width: 6),
+              Text(
+                'KARISMA EVENT NUSANTARA 2025',
+                style: TextStyle(
+                  fontSize: 10,
+                  fontWeight: FontWeight.w800,
+                  color: AppColors.pine500,
+                  letterSpacing: 0.4,
+                  fontFamily: 'PlusJakartaSans',
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 3),
+          Row(
+            children: [
+              const Text(
+                'Atraksi & Event Budaya',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w800,
+                  color: AppColors.pine900,
+                  letterSpacing: -0.45,
+                  fontFamily: 'PlusJakartaSans',
+                ),
+              ),
+              const Spacer(),
+              GestureDetector(
+                onTap: () {}, // ponytail: M2 → EventScreen daftar lengkap
+                child: const Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      'Semua',
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w700,
+                        color: AppColors.pine700,
+                        fontFamily: 'PlusJakartaSans',
+                      ),
+                    ),
+                    Icon(Icons.arrow_forward_rounded, size: 13, color: AppColors.pine700),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 14),
+          ..._events.map((e) => Padding(
+                padding: const EdgeInsets.only(bottom: 12),
+                child: _EventCard(event: e),
+              )),
         ],
       ),
     );
@@ -1324,76 +1405,57 @@ class _EventSection extends StatelessWidget {
 }
 
 class _EventCard extends StatelessWidget {
-  final String tanggal;
-  final String countdown;
-  final String lokasi;
-  final String nama;
-  final String desc;
-  final Color color;
+  final _EventData event;
 
-  const _EventCard({
-    required this.tanggal,
-    required this.countdown,
-    required this.lokasi,
-    required this.nama,
-    required this.desc,
-    required this.color,
-  });
+  const _EventCard({required this.event});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(15),
+      width: double.infinity,
+      height: 101,
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(22),
-        border: Border.all(color: AppColors.border),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x122E5C43),
-            blurRadius: 24,
-            offset: Offset(0, 8),
-            spreadRadius: -4,
-          ),
-        ],
+        border: Border.all(color: AppColors.borderLight),
+        boxShadow: AppColors.shadowCard,
       ),
+      padding: const EdgeInsets.all(11),
       child: Row(
         children: [
-          // Thumbnail kalender
-          Container(
-            width: 56,
-            height: 64,
-            decoration: BoxDecoration(
-              color: AppColors.pine500.withOpacity(0.2),
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: AppColors.border),
-            ),
-            clipBehavior: Clip.hardEdge,
-            child: Column(
-              children: [
-                Expanded(
-                  child: Container(
-                    color: AppColors.pine500.withOpacity(0.15),
-                    child: const Center(
-                      child: Icon(Icons.image_rounded, size: 24, color: AppColors.pine500),
+          // Thumbnail + tanggal (56×64)
+          ClipRRect(
+            borderRadius: BorderRadius.circular(12),
+            child: SizedBox(
+              width: 56,
+              height: 64,
+              child: Stack(
+                children: [
+                  Positioned.fill(
+                    child: Image.asset(event.foto, fit: BoxFit.cover),
+                  ),
+                  Positioned(
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    child: Container(
+                      height: 18,
+                      color: AppColors.pine700,
+                      alignment: Alignment.center,
+                      child: Text(
+                        event.tanggal,
+                        style: const TextStyle(
+                          fontSize: 9,
+                          fontWeight: FontWeight.w900,
+                          color: Colors.white,
+                          letterSpacing: 0.3,
+                          fontFamily: 'PlusJakartaSans',
+                        ),
+                      ),
                     ),
                   ),
-                ),
-                Container(
-                  width: double.infinity,
-                  color: color,
-                  padding: const EdgeInsets.symmetric(vertical: 2),
-                  child: Text(
-                    tanggal,
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      fontSize: 9,
-                      fontWeight: FontWeight.w900,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
           const SizedBox(width: 12),
@@ -1404,56 +1466,83 @@ class _EventCard extends StatelessWidget {
                 Row(
                   children: [
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 3),
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                       decoration: BoxDecoration(
-                        color: const Color(0xFFFFFBEB),
+                        color: AppColors.goldChipBg,
                         borderRadius: BorderRadius.circular(6),
-                        border: Border.all(color: const Color(0xCCFDE68A)),
+                        border: Border.all(color: AppColors.goldChipBorder),
                       ),
                       child: Text(
-                        countdown,
+                        event.countdown,
                         style: const TextStyle(
                           fontSize: 9,
                           fontWeight: FontWeight.w800,
-                          color: Color(0xFF92400E),
+                          color: AppColors.goldChipText,
+                          fontFamily: 'PlusJakartaSans',
                         ),
                       ),
                     ),
-                    const SizedBox(width: 6),
+                    const SizedBox(width: 8),
                     Text(
-                      lokasi,
-                      style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: AppColors.pine500),
+                      event.lokasi,
+                      style: const TextStyle(
+                        fontSize: 10,
+                        fontWeight: FontWeight.w700,
+                        color: AppColors.pine500,
+                        fontFamily: 'PlusJakartaSans',
+                      ),
                     ),
                   ],
                 ),
-                const SizedBox(height: 2),
+                const SizedBox(height: 5),
                 Text(
-                  nama,
-                  style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: AppColors.pine900),
+                  event.nama,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.pine900,
+                    fontFamily: 'PlusJakartaSans',
+                  ),
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  desc,
+                  event.deskripsi,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(fontSize: 10, color: AppColors.textSecondary),
+                  style: const TextStyle(
+                    fontSize: 10,
+                    fontWeight: FontWeight.w500,
+                    color: AppColors.textBody,
+                    height: 1.4,
+                    fontFamily: 'PlusJakartaSans',
+                  ),
                 ),
               ],
             ),
           ),
-          const SizedBox(width: 8),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-            decoration: BoxDecoration(
-              color: AppColors.surfaceVariant,
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: const Row(
-              children: [
-                Text('Detail', style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: AppColors.pine900)),
-                SizedBox(width: 2),
-                Icon(Icons.chevron_right_rounded, size: 12, color: AppColors.pine900),
-              ],
+          const SizedBox(width: 10),
+          GestureDetector(
+            onTap: () {}, // ponytail: M2 → DetailEventScreen
+            child: Container(
+              width: 66,
+              height: 32,
+              decoration: BoxDecoration(
+                color: AppColors.surfaceVariant,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: const Center(
+                child: Text(
+                  'Detail',
+                  style: TextStyle(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.pine900,
+                    fontFamily: 'PlusJakartaSans',
+                  ),
+                ),
+              ),
             ),
           ),
         ],
@@ -1462,54 +1551,108 @@ class _EventCard extends StatelessWidget {
   }
 }
 
-// ─── Footer ───────────────────────────────────────────────────────────────────
+// ─── Footer ──────────────────────────────────────────────────────────────────
 
-class _Footer extends StatelessWidget {
+/// Ketinggian yang pas supaya footer tidak tertutup nav floating, dan sisa
+/// bawah halaman kosong agar nav pill berdiri sendiri.
+class KamaimoNavClearance extends StatelessWidget {
+  const KamaimoNavClearance({super.key});
+
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(top: 24),
-      padding: const EdgeInsets.symmetric(vertical: 25, horizontal: 16),
-      decoration: const BoxDecoration(
-        border: Border(top: BorderSide(color: AppColors.borderLight)),
-      ),
+    final inset = MediaQuery.paddingOf(context).bottom;
+    return SizedBox(height: inset + 92);
+  }
+}
+
+class KamaimoFooter extends StatelessWidget {
+  const KamaimoFooter({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    const links = ['Hotel & Penginapan', 'Kuliner Khas', 'Paket Wisata', 'Hubungi Kami'];
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Column(
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: const [
-              Icon(Icons.account_balance_rounded, size: 16, color: AppColors.pine700),
-              SizedBox(width: 6),
-              Text(
-                'Dinas Pariwisata Provinsi Sulawesi Tengah',
-                style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w800,
-                  color: AppColors.pine700,
-                  letterSpacing: -0.3,
+          const FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(Icons.eco_rounded, color: AppColors.pine700, size: 16),
+                SizedBox(width: 6),
+                Text(
+                  'Dinas Pariwisata Provinsi Sulawesi Tengah',
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w800,
+                    color: AppColors.pine700,
+                    fontFamily: 'PlusJakartaSans',
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-          const SizedBox(height: 4),
+          const SizedBox(height: 5),
           const Text(
             'Berani Kamaimo • Gerakan Wisata Berkelanjutan & Ekraf Sulteng',
             textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 11, fontWeight: FontWeight.w500, color: AppColors.textSecondary),
+            style: TextStyle(
+              fontSize: 11,
+              fontWeight: FontWeight.w500,
+              color: AppColors.textBody,
+              fontFamily: 'PlusJakartaSans',
+            ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 14),
           Wrap(
             alignment: WrapAlignment.center,
-            spacing: 8,
-            children: const [
-              _FooterLink('Hotel & Penginapan'),
-              Text('•', style: TextStyle(color: AppColors.pine500)),
-              _FooterLink('Kuliner Khas'),
-              Text('•', style: TextStyle(color: AppColors.pine500)),
-              _FooterLink('Peta Wisata'),
-              Text('•', style: TextStyle(color: AppColors.pine500)),
-              _FooterLink('Tentang Kami'),
+            spacing: 10,
+            runSpacing: 6,
+            children: [
+              for (var i = 0; i < links.length; i++) ...[
+                if (i > 0)
+                  const Text(
+                    '•',
+                    style: TextStyle(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.pine500,
+                    ),
+                  ),
+                Text(
+                  links[i],
+                  style: const TextStyle(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.pine500,
+                    fontFamily: 'PlusJakartaSans',
+                  ),
+                ),
+              ],
             ],
+          ),
+          const SizedBox(height: 16),
+          const Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              _SocialCircle(icon: Icons.camera_alt_rounded),
+              SizedBox(width: 12),
+              _SocialCircle(icon: Icons.play_circle_rounded),
+              SizedBox(width: 12),
+              _SocialCircle(icon: Icons.public_rounded),
+            ],
+          ),
+          const SizedBox(height: 12),
+          const Text(
+            '© 2026 Dinas Pariwisata Sulawesi Tengah. Hak Cipta Dilindungi.',
+            style: TextStyle(
+              fontSize: 10,
+              fontWeight: FontWeight.w500,
+              color: AppColors.textTertiary,
+              fontFamily: 'PlusJakartaSans',
+            ),
           ),
         ],
       ),
@@ -1517,20 +1660,26 @@ class _Footer extends StatelessWidget {
   }
 }
 
-class _FooterLink extends StatelessWidget {
-  final String label;
-  const _FooterLink(this.label);
+class _SocialCircle extends StatelessWidget {
+  final IconData icon;
+  const _SocialCircle({required this.icon});
 
   @override
   Widget build(BuildContext context) {
-    return Text(
-      label,
-      style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: AppColors.pine500),
+    return Container(
+      width: 32,
+      height: 32,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        shape: BoxShape.circle,
+        border: Border.all(color: AppColors.border),
+      ),
+      child: Icon(icon, color: AppColors.pine500, size: 15),
     );
   }
 }
 
-// ─── Placeholder Screen ───────────────────────────────────────────────────────
+// ─── Placeholder Screen (M2) ─────────────────────────────────────────────────
 
 class _PlaceholderScreen extends StatelessWidget {
   final String title;
@@ -1543,7 +1692,12 @@ class _PlaceholderScreen extends StatelessWidget {
       body: Center(
         child: Text(
           '$title (M2)',
-          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppColors.textTertiary),
+          style: const TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: AppColors.textTertiary,
+            fontFamily: 'PlusJakartaSans',
+          ),
         ),
       ),
     );

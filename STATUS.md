@@ -16,7 +16,7 @@
 | Fase | Status | Owner | Catatan |
 |---|---|---|---|
 | M0 — Skeleton + kontrak | 🟡 In progress | AI Claude | Setup struktur, tema, model, repository — 85% selesai |
-| M1 — Mode user inti | 🟡 In progress | AI Claude | NavBar+Hero+Filter+Peta(placeholder)+Carousel+Event+Footer selesai; flutter run belum diverifikasi |
+| M1 — Mode user inti | 🟡 In progress | AI Claude | Beranda (Figma 4273:55) ✅ + Tab Destinasi (Figma 4258:1619) ✅ — Event/Paket/Eksplor masih placeholder; Detail Wisata pakai screen lama; flutter run belum diverifikasi |
 | M2 — Mode user lengkap | 🔲 Not started | — | Paket, Kuliner, Hotel, Ulasan, Ranking Turis |
 | M3 — Mode admin | 🔲 Not started | — | Login rahasia, dashboard, CRUD 9 entitas, super admin |
 
@@ -24,12 +24,12 @@ Legenda: 🔲 Not started · 🟡 In progress · ✅ Done · 🔴 Blocked
 
 ## Next Task
 
-Lihat Figma Design 1 (6 halaman desain) untuk styling akurat, lalu lanjut:
-- M1-1.2 — NavBar blur saat scroll
-- M1-1.3 — Menu scroll-to-section
-- M1-1.4 — Hero paralax + animasi judul per-huruf
-- M1-2 — Peta `flutter_map` + Carousel 3D cover-flow
-- M1-3 — Detail Desa + "How to Get There"
+- M1-2.x — **Tab Paket Wisata** (`4965:1243` "Paket Wisata Sulteng (Modern)") — design sudah di-render & diukur
+- M1-2.y — **Tab Event** (`AREA EVENT 5055:1830` atau set `4995:*`) — perlu pilih frame final
+- M1-2.z — **Tab Eksplor** (`AREA EXPLORE 5055:1831` + Explorer per kota)
+- M1-3 — Rebuild **Detail Wisata - Luk Panenteng** (`4714:452`) + Tulis Ulasan (`4896:2146`) + Bagikan (`4890:1847`)
+- `flutter run` untuk verifikasi visual aset crop (thumb + featured destinasi & beranda)
+- Frame duplikat di Figma perlu dikonfirmasi satu-satu saat mulai tiap tab (user yang memilih node)
 
 ## Blocker
 

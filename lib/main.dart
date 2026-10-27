@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'core/config/env.dart';
 import 'core/network/api_client.dart';
 import 'core/network/token_store.dart';
 import 'core/theme/app_theme.dart';
 import 'core/utils/constants.dart';
 import 'data/repositories/kunjungan_turis_repository.dart';
 import 'features/user/sambutan/halaman_sambutan.dart';
+import 'features/user/detail_wisata/detail_wisata_screen.dart';
+import 'features/user/home/semua_destinasi_screen.dart';
 import 'features/user/home/user_shell.dart';
 
 void main() {
@@ -25,11 +26,11 @@ class MyApp extends StatelessWidget {
           create: (_) => InMemoryTokenStore(),
         ),
         ProxyProvider<TokenStore, ApiClient>(
-          update: (_, tokenStore, __) =>
+          update: (_, tokenStore, _) =>
               ApiClient(tokenStore: tokenStore),
         ),
         ProxyProvider<ApiClient, KunjunganTurisRepository>(
-          update: (_, apiClient, __) =>
+          update: (_, apiClient, _) =>
               KunjunganTurisRepository(apiClient),
         ),
       ],
@@ -41,6 +42,21 @@ class MyApp extends StatelessWidget {
         routes: {
           AppConstants.routeSambutan: (context) => const HalamanSambutan(),
           AppConstants.routeHome: (context) => const UserShell(),
+          AppConstants.routePaketWisata: (context) => const SemuaDestinasiScreen(),
+        },
+        onGenerateRoute: (settings) {
+          if (settings.name == AppConstants.routeDetailDesa) {
+            final args = settings.arguments as Map<String, dynamic>?;
+            return MaterialPageRoute(
+              builder: (_) => DetailWisataScreen(
+                desaId: args?['desaId'] ?? 1,
+                namaDesa: args?['namaDesa'] ?? 'Destinasi',
+                lokasi: args?['lokasi'] ?? 'Sulawesi Tengah',
+                foto: args?['foto'] ?? '',
+              ),
+            );
+          }
+          return null;
         },
         onUnknownRoute: (settings) => PageRouteBuilder(
           pageBuilder: (context, animation, secondaryAnimation) =>

@@ -8,9 +8,8 @@ import 'token_store.dart';
 class ApiClient {
   ApiClient({
     http.Client? httpClient,
-    required TokenStore tokenStore,
-  })  : _httpClient = httpClient ?? http.Client(),
-        _tokenStore = tokenStore;
+    required this._tokenStore,
+  })  : _httpClient = httpClient ?? http.Client();
 
   final http.Client _httpClient;
   final TokenStore _tokenStore;

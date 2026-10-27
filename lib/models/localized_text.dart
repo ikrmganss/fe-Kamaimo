@@ -3,7 +3,7 @@ class LocalizedText {
   LocalizedText._();
 
   /// Nilai Bahasa Indonesia (`_id`).
-  static String id(String id, String? en) => en != null ? en : id;
+  static String id(String id, String? en) => en ?? id;
 
   /// Nilai Bahasa Inggris (`_en`), fallback ke `id`.
   static String en(String id, String? en) => en ?? id;
