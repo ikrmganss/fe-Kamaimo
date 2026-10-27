@@ -24,10 +24,10 @@ class _HeroFullScreenSection extends StatelessWidget {
           // Gradient overlay for text readability (match Figma: rgba(18, 40, 29, 0.8))
           Container(
             decoration: const BoxDecoration(
-              gradient: const LinearGradient(
+              gradient: LinearGradient(
                 begin: Alignment.bottomCenter,
                 end: Alignment.topCenter,
-                colors: const [
+                colors: [
                   Color(0xCC12281D), // rgba(18, 40, 29, 0.8)
                   Color(0x0012281D), // transparent at top
                 ],

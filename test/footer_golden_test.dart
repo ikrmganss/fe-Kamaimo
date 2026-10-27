@@ -64,6 +64,9 @@ void main() {
     }
     await tester.pumpAndSettle();
     expect(find.text(_copyright), findsOneWidget);
+    // Tunggu decode gambar selesai: golden lama pernah kecapture saat kartu terakhir masih kosong.
+    await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 200)));
+    await tester.pumpAndSettle();
     await expectLater(
       find.byType(MaterialApp),
       matchesGoldenFile('goldens/destinasi_bottom.png'),
