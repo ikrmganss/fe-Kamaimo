@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import '../../../core/theme/app_colors.dart';
 import '../destinasi/destinasi_screen.dart';
 import '../event/event_screen.dart';
+import '../paket/paket_screen.dart';
 import 'semua_destinasi_screen.dart';
 
 /// Shell user: nav floating 5 tab + beranda, mengikuti Figma node 4273:55.
@@ -27,7 +28,7 @@ class _UserShellState extends State<UserShell> {
           HomeScreen(),
           DestinasiScreen(),
           EventScreen(),
-          _PlaceholderScreen('Paket'),
+          PaketScreen(),
           _PlaceholderScreen('Eksplor'),
         ],
       ),
