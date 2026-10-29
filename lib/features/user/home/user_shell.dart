@@ -3,7 +3,9 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import '../../../core/theme/app_colors.dart';
 import '../destinasi/destinasi_screen.dart';
+import '../eksplor/eksplor_screen.dart';
 import '../event/event_screen.dart';
+import '../paket/paket_screen.dart';
 import 'semua_destinasi_screen.dart';
 
 /// Shell user: nav floating 5 tab + beranda, mengikuti Figma node 4273:55.
@@ -27,8 +29,8 @@ class _UserShellState extends State<UserShell> {
           HomeScreen(),
           DestinasiScreen(),
           EventScreen(),
-          _PlaceholderScreen('Paket'),
-          _PlaceholderScreen('Eksplor'),
+          PaketScreen(),
+          EksplorScreen(),
         ],
       ),
       bottomNavigationBar: _FloatingBottomNav(
@@ -1679,27 +1681,3 @@ class _SocialCircle extends StatelessWidget {
   }
 }
 
-// ─── Placeholder Screen (M2) ─────────────────────────────────────────────────
-
-class _PlaceholderScreen extends StatelessWidget {
-  final String title;
-  const _PlaceholderScreen(this.title);
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.background,
-      body: Center(
-        child: Text(
-          '$title (M2)',
-          style: const TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            color: AppColors.textTertiary,
-            fontFamily: 'PlusJakartaSans',
-          ),
-        ),
-      ),
-    );
-  }
-}

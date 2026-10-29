@@ -65,6 +65,7 @@ flutter:
     - assets/images/beranda/
     - assets/images/destinasi/
     - assets/images/detail_wisata/
+    - assets/images/eksplor/
     - assets/images/paket/
 
   # Fonts

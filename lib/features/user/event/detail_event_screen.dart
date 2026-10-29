@@ -25,7 +25,11 @@ class _DetailEventScreenState extends State<DetailEventScreen> {
   void initState() {
     super.initState();
     _detail = EventDetailSeed.of(widget.event.nama);
-    _start = DateTime(widget.event.start.year, widget.event.start.month, widget.event.start.day);
+    _start = DateTime(
+      widget.event.start.year,
+      widget.event.start.month,
+      widget.event.start.day,
+    );
   }
 
   Duration get _diff {
@@ -35,34 +39,6 @@ class _DetailEventScreenState extends State<DetailEventScreen> {
     if (d.isNegative) d = Duration.zero;
     return d;
   }
-
-  int get _hari => _diff.inDays;
-  int get _jam => (_diff.inSeconds % 86400) ~/ 3600;
-  int get _menit => (_diff.inSeconds % 3600) ~/ 60;
-  int get _detik => _diff.inSeconds % 60;
-
-  String get _jadwal {
-    final mulai = widget.event.start;
-    final akhir = widget.event.start.add(const Duration(days: 1));
-    final fmt = (DateTime d) => '${d.day} ${_month[d.month]} ${d.year}';
-    return '${fmt(mulai)} - ${fmt(akhir)} • 2 Hari Penuh';
-  }
-
-  static const _month = [
-    null,
-    'JAN',
-    'FEB',
-    'MAR',
-    'APR',
-    'MEI',
-    'JUN',
-    'JUL',
-    'AGU',
-    'SEP',
-    'OKT',
-    'NOV',
-    'DES',
-  ];
 
   @override
   Widget build(BuildContext context) {
@@ -133,8 +109,11 @@ class _DetailEventScreenState extends State<DetailEventScreen> {
                           color: AppColors.emerald50,
                           borderRadius: BorderRadius.circular(10),
                         ),
-                        child: Icon(Icons.info_outline_rounded,
-                            size: 18, color: AppColors.emerald600),
+                        child: Icon(
+                          Icons.info_outline_rounded,
+                          size: 18,
+                          color: AppColors.emerald600,
+                        ),
                       ),
                       const SizedBox(width: 8),
                       const Text(
@@ -179,8 +158,11 @@ class _DetailEventScreenState extends State<DetailEventScreen> {
                           color: AppColors.warning.withValues(alpha: 0.15),
                           borderRadius: BorderRadius.circular(10),
                         ),
-                        child: Icon(Icons.star_rounded,
-                            size: 18, color: AppColors.warning),
+                        child: Icon(
+                          Icons.star_rounded,
+                          size: 18,
+                          color: AppColors.warning,
+                        ),
                       ),
                       const SizedBox(width: 8),
                       const Text(
@@ -195,7 +177,9 @@ class _DetailEventScreenState extends State<DetailEventScreen> {
                       const SizedBox(width: 6),
                       Container(
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 8, vertical: 2),
+                          horizontal: 8,
+                          vertical: 2,
+                        ),
                         decoration: BoxDecoration(
                           color: AppColors.warning.withValues(alpha: 0.2),
                           borderRadius: BorderRadius.circular(9999),
@@ -213,9 +197,8 @@ class _DetailEventScreenState extends State<DetailEventScreen> {
                     ],
                   ),
                   const SizedBox(height: 12),
-                  ...d.program.asMap().entries.map((e) {
-                    final idx = e.key;
-                    final prog = e.value;
+                   ...d.program.asMap().entries.map((e) {
+                     final prog = e.value;
                     return Padding(
                       padding: const EdgeInsets.only(bottom: 14),
                       child: Row(
@@ -228,8 +211,11 @@ class _DetailEventScreenState extends State<DetailEventScreen> {
                               color: AppColors.surfaceElevated,
                               borderRadius: BorderRadius.circular(14),
                             ),
-                            child: const Icon(Icons.image_rounded,
-                                size: 32, color: AppColors.textTertiary),
+                            child: const Icon(
+                              Icons.image_rounded,
+                              size: 32,
+                              color: AppColors.textTertiary,
+                            ),
                           ),
                           const SizedBox(width: 10),
                           Expanded(
@@ -262,8 +248,9 @@ class _DetailEventScreenState extends State<DetailEventScreen> {
                             ),
                           ),
                         ],
-                      );
-                    }).toList(),
+                      ),
+                    );
+                  }).toList(),
                 ],
               ),
             ),
@@ -292,8 +279,11 @@ class _DetailEventScreenState extends State<DetailEventScreen> {
                           color: AppColors.emerald50,
                           borderRadius: BorderRadius.circular(10),
                         ),
-                        child: Icon(Icons.location_on_rounded,
-                            size: 18, color: AppColors.pine700),
+                        child: Icon(
+                          Icons.location_on_rounded,
+                          size: 18,
+                          color: AppColors.pine700,
+                        ),
                       ),
                       const SizedBox(width: 8),
                       const Text(
@@ -333,8 +323,11 @@ class _DetailEventScreenState extends State<DetailEventScreen> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(Icons.map_rounded,
-                              size: 48, color: AppColors.textTertiary),
+                          Icon(
+                            Icons.map_rounded,
+                            size: 48,
+                            color: AppColors.textTertiary,
+                          ),
                           const SizedBox(height: 8),
                           Text(
                             d.lokasi,
@@ -351,13 +344,15 @@ class _DetailEventScreenState extends State<DetailEventScreen> {
                     ),
                   ),
                   const SizedBox(height: 14),
-                  ...d.akses.map((a) => Padding(
-                        padding: const EdgeInsets.only(bottom: 10),
-                        child: _AccessTile(
-                          title: a['title'] as String,
-                          detail: a['detail'] as String,
-                        ),
-                      )),
+                  ...d.akses.map(
+                    (a) => Padding(
+                      padding: const EdgeInsets.only(bottom: 10),
+                      child: _AccessTile(
+                        title: a['title'] as String,
+                        detail: a['detail'] as String,
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -394,7 +389,7 @@ class _DetailEventScreenState extends State<DetailEventScreen> {
                     }).toList(),
                   ),
                   const SizedBox(height: 8),
-                  const Text(
+                  Text(
                     '© ${DateTime.now().year} Dinas Pariwisata Sulteng',
                     style: TextStyle(
                       fontSize: 10,
@@ -437,14 +432,17 @@ class _DetailEventScreenState extends State<DetailEventScreen> {
     'DES',
   ];
 
-  void _share() => ScaffoldMessenger.of(context)
-      .showSnackBar(const SnackBar(content: Text('Fitur bagikan akan hadir di M2.')));
+  void _share() => ScaffoldMessenger.of(context).showSnackBar(
+    const SnackBar(content: Text('Fitur bagikan akan hadir di M2.')),
+  );
 
   void _saveCalendar() => ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Fitur simpan ke kalender akan hadir di M2.')));
+    const SnackBar(content: Text('Fitur simpan ke kalender akan hadir di M2.')),
+  );
 
-  void _openMaps() => ScaffoldMessenger.of(context)
-      .showSnackBar(const SnackBar(content: Text('Buka Google Maps — fitur M2.')));
+  void _openMaps() => ScaffoldMessenger.of(
+    context,
+  ).showSnackBar(const SnackBar(content: Text('Buka Google Maps — fitur M2.')));
 }
 
 /// Rundown section with tabs (Hari 1 / Hari 2) + timeline items
@@ -452,10 +450,7 @@ class _RundownSection extends StatefulWidget {
   final List<Map<String, dynamic>> rundown;
   final String zonaWita;
 
-  const _RundownSection({
-    required this.rundown,
-    required this.zonaWita,
-  });
+  const _RundownSection({required this.rundown, required this.zonaWita});
 
   @override
   State<_RundownSection> createState() => _RundownSectionState();
@@ -477,8 +472,11 @@ class _RundownSectionState extends State<_RundownSection> {
                 color: AppColors.emerald50,
                 borderRadius: BorderRadius.circular(10),
               ),
-              child: Icon(Icons.schedule_rounded,
-                  size: 18, color: AppColors.pine700),
+              child: Icon(
+                Icons.schedule_rounded,
+                size: 18,
+                color: AppColors.pine700,
+              ),
             ),
             const SizedBox(width: 8),
             const Text(
@@ -519,7 +517,9 @@ class _RundownSectionState extends State<_RundownSection> {
               child: GestureDetector(
                 onTap: () => setState(() => _activeTab = i),
                 child: Container(
-                  margin: EdgeInsets.only(right: i < widget.rundown.length - 1 ? 8 : 0),
+                  margin: EdgeInsets.only(
+                    right: i < widget.rundown.length - 1 ? 8 : 0,
+                  ),
                   padding: const EdgeInsets.symmetric(vertical: 8),
                   decoration: BoxDecoration(
                     color: active ? AppColors.pine700 : Colors.white,
@@ -537,11 +537,11 @@ class _RundownSectionState extends State<_RundownSection> {
                     ),
                   ),
                 ),
-              );
-            }),
+              ),
+            );
+          }),
         ),
-        const SizedBox(height: 14),
-        // Timeline items for active day
+        const SizedBox(height: 14), // Timeline items for active day
         ...(widget.rundown[_activeTab]['items'] as List).map((item) {
           final chipColor = _chipColor(item['chipColor'] as String);
           return Padding(
@@ -561,10 +561,7 @@ class _RundownSectionState extends State<_RundownSection> {
                       ),
                     ),
                     Expanded(
-                      child: Container(
-                        width: 2,
-                        color: AppColors.divider,
-                      ),
+                      child: Container(width: 2, color: AppColors.divider),
                     ),
                   ],
                 ),
@@ -578,7 +575,9 @@ class _RundownSectionState extends State<_RundownSection> {
                         children: [
                           Container(
                             padding: const EdgeInsets.symmetric(
-                                horizontal: 8, vertical: 2),
+                              horizontal: 8,
+                              vertical: 2,
+                            ),
                             decoration: BoxDecoration(
                               color: chipColor.withValues(alpha: 0.15),
                               borderRadius: BorderRadius.circular(9999),
@@ -632,8 +631,9 @@ class _RundownSectionState extends State<_RundownSection> {
                   ),
                 ),
               ],
-            );
-          }).toList(),
+            ),
+          );
+        }).toList(),
       ],
     );
   }
@@ -674,8 +674,11 @@ class _AccessTile extends StatelessWidget {
               color: AppColors.surfaceElevated,
               borderRadius: BorderRadius.circular(10),
             ),
-            child: Icon(Icons.directions_bus_rounded,
-                size: 18, color: AppColors.pine700),
+            child: Icon(
+              Icons.directions_bus_rounded,
+              size: 18,
+              color: AppColors.pine700,
+            ),
           ),
           const SizedBox(width: 10),
           Expanded(
