@@ -220,3 +220,62 @@ Fitur-fitur ini muncul di PRD tapi **belum perlu** diimplementasikan sekarang:
 ---
 
 _Dokumen ini disusun berdasarkan analisis kode sumber `lib/features/user/home/user_shell.dart` (widget `_WeatherCard`), `lib/core/network/api_config.dart`, `pubspec.yaml`, dan `PRD.md`._
+
+---
+
+
+# 6. UPDATE (2026-11-07) — Endpoint Admin untuk Dashboard Grafik
+
+Konteks: backend aktif kini `magangpade/BE_BeraniKamaimo` (MySQL, envelope `{success, message, data}`). Mode admin (M3) di frontend sudah dibangun dan memakai endpoint yang **sudah ada**: `POST /user/login`, `GET /visitor/summary`, `GET /pageview/chart?filter=`.
+
+Yang **belum ada** dan dibutuhkan dashboard (PRD §19):
+
+## `GET /pageview/summary`
+
+Ringkasan kunjungan 6 periode untuk 6 kartu metrik dashboard admin.
+
+> **Auth:** Bearer token dari `POST /user/login` (middleware `authenticate`).
+
+### Response (200 OK)
+
+```json
+{
+  "success": true,
+  "message": "OK",
+  "data": {
+    "today":     { "visits": 14, "visitors": 9  },
+    "yesterday": { "visits": 21, "visitors": 11 },
+    "thisWeek":  { "visits": 78, "visitors": 33 },
+    "lastWeek":  { "visits": 91, "visitors": 40 },
+    "thisMonth": { "visits": 240, "visitors": 88 },
+    "allTime":   { "visits": 45, "visitors": 12 }
+  }
+}
+```
+
+**Definisi:**
+
+| Key | Makna |
+|-----|-------|
+| `visits` | jumlah baris `pageview` dalam periode |
+| `visitors` | `COUNT(DISTINCT visitorId)` dalam periode |
+| `today` | sejak 00:00 hari ini (zona waktu server) |
+| `yesterday` | hari sebelumnya penuh |
+| `thisWeek` | minggu berjalan (awal Senin) |
+| `lastWeek` | minggu sebelum `thisWeek` |
+| `thisMonth` | tanggal 1 bulan ini sampai sekarang |
+| `allTime` | semua data (setara `GET /visitor/summary`) |
+
+Semua key **wajib ada** (boleh nilai 0) supaya frontend tidak perlu null-check.
+
+### Checklist untuk tim backend
+
+- [ ] Buat endpoint `GET /api/pageview/summary` sesuai kontrak di atas
+- [ ] Lindungi dengan middleware `authenticate` (khusus role Admin)
+- [ ] 6 nilai bisa dari satu query `GROUP BY periode` + satu query total — jangan 6 round-trip terpisah
+- [ ] Konsisten zona waktu server (pageview pakai `dateStrings: true` di db.js)
+
+---
+
+_Setelah endpoint ini tersedia, 6 kartu di dashboard admin otomatis memakai data asli (frontend sudah menunggu format persis ini)._
+
