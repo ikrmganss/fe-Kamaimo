@@ -486,9 +486,7 @@ class _SearchBarState extends State<_SearchBar> {
   void _onSubmit(String value) {
     if (value.trim() == _secretCode) {
       _ctrl.clear();
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Mode admin: akan aktif di M3')),
-      );
+      Navigator.of(context).pushNamed('/admin-login');
     }
   }
 

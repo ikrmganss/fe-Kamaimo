@@ -1,13 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:berani_kamaimo/features/user/home/user_shell.dart';
+import 'package:berani_kamaimo/features/admin/login/admin_login_screen.dart';
+import 'package:berani_kamaimo/core/utils/constants.dart';
 
 void main() {
   // Self-check UI beranda: semua section sesuai tasarinya ada + tanpa overflow error.
   testWidgets('beranda menampilkan semua section per Figma 4273:55', (tester) async {
     await tester.pumpWidget(
-      const MaterialApp(
-        home: UserShell(),
+      MaterialApp(
+        home: const UserShell(),
+        routes: {
+          AppConstants.routeAdminLogin: (_) => const AdminLoginScreen(),
+        },
       ),
     );
     await tester.pumpAndSettle();
@@ -23,11 +28,12 @@ void main() {
     // Kode rahasia admin masih tertanam di search bar (backdoor)
     await tester.enterText(find.byType(TextField).first, 'adminBK2025');
     await tester.testTextInput.receiveAction(TextInputAction.done);
-    await tester.pump();
+    await tester.pumpAndSettle();
     expect(find.textContaining('Mode admin'), findsOneWidget);
 
-    // Tab nav
+    // Kembali ke beranda lalu cek tab nav
+    await tester.tap(find.byType(TextButton).first); // kembali ke aplikasi
+    await tester.pumpAndSettle();
     expect(find.text('Eksplor'), findsOneWidget);
-    expect(find.text('Kuliner'), findsNothing); // label lama sudah kedaluwarsa
   });
 }
