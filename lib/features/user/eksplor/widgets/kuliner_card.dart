@@ -23,6 +23,7 @@ class KulinerCard extends StatelessWidget {
         boxShadow: AppColors.shadowCard,
       ),
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           _media(),
@@ -47,8 +48,8 @@ class KulinerCard extends StatelessWidget {
                   spacing: 8,
                   runSpacing: 8,
                   children: [
-                    for (final (label, kind) in item.bahan)
-                      _BahanChip(label: label, kind: kind),
+                    for (final (icon, label, kind) in item.bahan)
+                      _BahanChip(icon: icon, label: label, kind: kind),
                   ],
                 ),
                 const SizedBox(height: 14),
@@ -73,7 +74,7 @@ class KulinerCard extends StatelessWidget {
     return ClipRRect(
       borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
       child: SizedBox(
-        height: 220,
+        height: 280,
         child: Stack(
           fit: StackFit.expand,
           children: [
@@ -83,8 +84,11 @@ class KulinerCard extends StatelessWidget {
               errorBuilder: (_, _, _) => const ColoredBox(
                 color: AppColors.mapBackground,
                 child: Center(
-                  child: Icon(Icons.restaurant_rounded,
-                      size: 44, color: AppColors.pine500),
+                  child: Icon(
+                    Icons.restaurant_rounded,
+                    size: 44,
+                    color: AppColors.pine500,
+                  ),
                 ),
               ),
             ),
@@ -97,8 +101,10 @@ class KulinerCard extends StatelessWidget {
                 top: 12,
                 left: 12,
                 child: Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 6,
+                  ),
                   decoration: BoxDecoration(
                     color: AppColors.goldChipBg,
                     borderRadius: BorderRadius.circular(9999),
@@ -135,14 +141,28 @@ class KulinerCard extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 4),
-                  Text(
-                    '🍲 ${item.warung}',
-                    style: const TextStyle(
-                      fontSize: 10.5,
-                      fontWeight: FontWeight.w700,
-                      color: AppColors.starGold,
-                      fontFamily: 'PlusJakartaSans',
-                    ),
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(
+                        Icons.storefront_rounded,
+                        size: 12,
+                        color: AppColors.starGold,
+                      ),
+                      const SizedBox(width: 4),
+                      Flexible(
+                        child: Text(
+                          item.warung,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                            fontSize: 10.5,
+                            fontWeight: FontWeight.w700,
+                            color: AppColors.starGold,
+                            fontFamily: 'PlusJakartaSans',
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -155,10 +175,15 @@ class KulinerCard extends StatelessWidget {
 }
 
 class _BahanChip extends StatelessWidget {
+  final IconData icon;
   final String label;
   final ChipKind kind;
 
-  const _BahanChip({required this.label, required this.kind});
+  const _BahanChip({
+    required this.icon,
+    required this.label,
+    required this.kind,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -168,8 +193,8 @@ class _BahanChip extends StatelessWidget {
         text: AppColors.emerald600,
       ),
       ChipKind.peach: (
-        backgroundColor: Color(0xFFFDE7E5),
-        text: Color(0xFFB3402F),
+        backgroundColor: AppColors.peachChipBg,
+        text: AppColors.peachChipText,
       ),
       ChipKind.cream: (
         backgroundColor: AppColors.goldChipBg,
@@ -187,14 +212,20 @@ class _BahanChip extends StatelessWidget {
             ? Border.all(color: AppColors.goldChipBorder)
             : null,
       ),
-      child: Text(
-        label,
-        style: TextStyle(
-          fontSize: 10.5,
-          fontWeight: FontWeight.w700,
-          color: colors.text,
-          fontFamily: 'PlusJakartaSans',
-        ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 12, color: colors.text),
+          const SizedBox(width: 5),
+          Text(
+            label,
+            style: const TextStyle(
+              fontSize: 10.5,
+              fontWeight: FontWeight.w700,
+              fontFamily: 'PlusJakartaSans',
+            ),
+          ),
+        ],
       ),
     );
   }

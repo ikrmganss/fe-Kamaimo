@@ -41,7 +41,7 @@ class KulinerItem {
   final String wilayah;
   final String? tag; // pill kiri atas foto ("Legendaris")
   final String deskripsi;
-  final List<(String, ChipKind)> bahan;
+  final List<(IconData, String, ChipKind)> bahan;
 
   const KulinerItem({
     required this.foto,
@@ -57,10 +57,30 @@ class KulinerItem {
 /// Warna chip bahan kuliner (mint | peach/pink | cream) sesuai desain.
 enum ChipKind { mint, peach, cream }
 
+/// Ikon bahan kuliner (pengganti emoji agar konsisten dengan ikon app).
+class KulinerIcons {
+  KulinerIcons._();
+
+  static const asamJawa = Icons.eco_rounded;
+  static const cabai = Icons.local_fire_department_rounded;
+  static const singkong = Icons.grain_rounded;
+  static const tuna = Icons.set_meal_rounded;
+  static const daunPisang = Icons.spa_rounded;
+  static const kunyit = Icons.eco_rounded;
+  static const santan = Icons.water_drop_rounded;
+  static const daging = Icons.dinner_dining_rounded;
+}
+
 class EksplorSeed {
   EksplorSeed._();
 
-  static const wilayah = ['Semua Wilayah', 'Palu', 'Luwuk', 'Ampana & Togean'];
+  static const wilayah = [
+    'Semua Wilayah',
+    'Palu',
+    'Donggala',
+    'Luwuk',
+    'Ampana & Togean',
+  ];
 
   static const hotel = <HotelItem>[
     HotelItem(
@@ -138,13 +158,14 @@ class EksplorSeed {
       nama: 'Onyop (Kuah Asam Ikan Segar)',
       warung: 'R.M TINAKU 2 (Khas Kaili)',
       wilayah: 'Palu',
-      deskripsi: 'Kuah asam pedas segar dari asam jawa muda santan, potongan '
+      deskripsi:
+          'Kuah asam pedas segar dari asam jawa muda santan, potongan '
           'ikan segar, dan cabai rawit hijau — makan siang legendaris '
           'pesisir Teluk Palu.',
       bahan: [
-        ('🌿 Asam Jawa Muda', ChipKind.mint),
-        ('🌶️ Cabai Rawit Hijau', ChipKind.peach),
-        ('🍠 Singkong Rebus', ChipKind.cream),
+        (KulinerIcons.asamJawa, 'Asam Jawa Muda', ChipKind.mint),
+        (KulinerIcons.cabai, 'Cabai Rawit Hijau', ChipKind.peach),
+        (KulinerIcons.singkong, 'Singkong Rebus', ChipKind.cream),
       ],
     ),
     KulinerItem(
@@ -153,13 +174,14 @@ class EksplorSeed {
       warung: 'Kaledo Donggala',
       wilayah: 'Donggala',
       tag: 'Legendaris',
-      deskripsi: 'Sup sumsum tulang kaki sapi empuk berkuah asam pedas khas '
+      deskripsi:
+          'Sup sumsum tulang kaki sapi empuk berkuah asam pedas khas '
           'rempah asam jawa mentah (uve kalopo) dan cabai rawit hijau yang '
           'disedot langsung dengan sedotan bambu.',
       bahan: [
-        ('🌿 Asam Jawa Segar', ChipKind.mint),
-        ('🌶️ Cabai Rawit Hijau', ChipKind.peach),
-        ('🍠 Singkong Rebus', ChipKind.cream),
+        (KulinerIcons.asamJawa, 'Asam Jawa Segar', ChipKind.mint),
+        (KulinerIcons.cabai, 'Cabai Rawit Hijau', ChipKind.peach),
+        (KulinerIcons.singkong, 'Singkong Rebus', ChipKind.cream),
       ],
     ),
     KulinerItem(
@@ -167,13 +189,14 @@ class EksplorSeed {
       nama: 'Lalampa (Ketan Bakar Isi Tuna)',
       warung: 'Raja Lalampa Toboli',
       wilayah: 'Palu',
-      deskripsi: 'Beras ketan berisi ikan tuna bakar bumbu pedas, dibungkus '
+      deskripsi:
+          'Beras ketan berisi ikan tuna bakar bumbu pedas, dibungkus '
           'daun pisang lalu dibakar — jajanan legendaris di jalur Toboli '
           'menuju Poso.',
       bahan: [
-        ('🌾 Beras Ketan', ChipKind.mint),
-        ('🐟 Tuna Bumbu', ChipKind.peach),
-        ('🌿 Daun Pisang', ChipKind.cream),
+        (KulinerIcons.singkong, 'Beras Ketan', ChipKind.mint),
+        (KulinerIcons.tuna, 'Tuna Bumbu', ChipKind.peach),
+        (KulinerIcons.daunPisang, 'Daun Pisang', ChipKind.cream),
       ],
     ),
     KulinerItem(
@@ -182,13 +205,14 @@ class EksplorSeed {
       warung: 'R.M Uta Dada Palu',
       wilayah: 'Palu',
       tag: 'Autentik',
-      deskripsi: 'Kuah kuning santan rempah dengan daging empuk dan sayuran '
+      deskripsi:
+          'Kuah kuning santan rempah dengan daging empuk dan sayuran '
           'khas punuk Kaili — hidangan hangat rumahan paling dicari saat '
           'musim hujan.',
       bahan: [
-        ('🌶️ Kunyit Segar', ChipKind.mint),
-        ('🥥 Santan Kental', ChipKind.peach),
-        ('🍲 Daging Sapi', ChipKind.cream),
+        (KulinerIcons.kunyit, 'Kunyit Segar', ChipKind.mint),
+        (KulinerIcons.santan, 'Santan Kental', ChipKind.peach),
+        (KulinerIcons.daging, 'Daging Sapi', ChipKind.cream),
       ],
     ),
   ];

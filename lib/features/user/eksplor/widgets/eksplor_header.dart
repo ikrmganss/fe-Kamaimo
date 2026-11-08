@@ -157,7 +157,27 @@ class EksplorHeader extends StatelessWidget {
                     ),
                   ),
                 ),
-                const SizedBox(width: 16),
+                // Tombol bersihkan (tampil saat field tidak kosong)
+                ValueListenableBuilder<TextEditingValue>(
+                  valueListenable: searchController,
+                  builder: (ctx, value, _) {
+                    if (value.text.isEmpty) return const SizedBox.shrink();
+                    return IconButton(
+                      onPressed: () {
+                        searchController.clear();
+                        onQuery('');
+                      },
+                      icon: const Icon(
+                        Icons.close_rounded,
+                        size: 18,
+                        color: AppColors.textTertiary,
+                      ),
+                      tooltip: 'Bersihkan pencarian',
+                      visualDensity: VisualDensity.compact,
+                    );
+                  },
+                ),
+                const SizedBox(width: 12),
               ],
             ),
           ),
@@ -165,7 +185,7 @@ class EksplorHeader extends StatelessWidget {
 
           // Chip wilayah (horizontal scroll)
           SizedBox(
-            height: 34,
+            height: 44,
             child: ListView.separated(
               scrollDirection: Axis.horizontal,
               itemCount: EksplorSeed.wilayah.length,
@@ -200,20 +220,24 @@ class _SegmentTab extends StatelessWidget {
     return Expanded(
       child: GestureDetector(
         onTap: onTap,
-        child: Container(
-          height: 44,
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-            color: selected ? AppColors.pine800 : Colors.transparent,
-            borderRadius: BorderRadius.circular(9999),
-          ),
-          child: Text(
-            label,
-            style: TextStyle(
-              fontSize: 13,
-              fontWeight: FontWeight.w700,
-              color: selected ? AppColors.textOnPrimary : AppColors.textBody,
-              fontFamily: 'PlusJakartaSans',
+        child: Semantics(
+          button: true,
+          selected: selected,
+          child: Container(
+            height: 48,
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              color: selected ? AppColors.pine800 : Colors.transparent,
+              borderRadius: BorderRadius.circular(9999),
+            ),
+            child: Text(
+              label,
+              style: TextStyle(
+                fontSize: 13,
+                fontWeight: FontWeight.w700,
+                color: selected ? AppColors.textOnPrimary : AppColors.textBody,
+                fontFamily: 'PlusJakartaSans',
+              ),
             ),
           ),
         ),
@@ -237,23 +261,27 @@ class _WilayahChip extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        alignment: Alignment.center,
-        decoration: BoxDecoration(
-          color: selected ? AppColors.pine800 : Colors.white,
-          borderRadius: BorderRadius.circular(9999),
-          border: selected
-              ? Border.all(color: AppColors.pine800)
-              : Border.all(color: AppColors.border),
-        ),
-        child: Text(
-          label,
-          style: TextStyle(
-            fontSize: 11.5,
-            fontWeight: FontWeight.w700,
-            color: selected ? AppColors.textOnPrimary : AppColors.textBody,
-            fontFamily: 'PlusJakartaSans',
+      child: Semantics(
+        button: true,
+        selected: selected,
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            color: selected ? AppColors.pine800 : Colors.white,
+            borderRadius: BorderRadius.circular(9999),
+            border: selected
+                ? Border.all(color: AppColors.pine800)
+                : Border.all(color: AppColors.border),
+          ),
+          child: Text(
+            label,
+            style: TextStyle(
+              fontSize: 11.5,
+              fontWeight: FontWeight.w700,
+              color: selected ? AppColors.textOnPrimary : AppColors.textBody,
+              fontFamily: 'PlusJakartaSans',
+            ),
           ),
         ),
       ),

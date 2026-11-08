@@ -23,6 +23,7 @@ class HotelCard extends StatelessWidget {
         boxShadow: AppColors.shadowCard,
       ),
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           _media(),
@@ -146,7 +147,7 @@ class HotelCard extends StatelessWidget {
     return ClipRRect(
       borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
       child: SizedBox(
-        height: 220,
+        height: 280,
         child: Stack(
           fit: StackFit.expand,
           children: [
@@ -156,8 +157,11 @@ class HotelCard extends StatelessWidget {
               errorBuilder: (_, _, _) => const ColoredBox(
                 color: AppColors.mapBackground,
                 child: Center(
-                  child: Icon(Icons.hotel_rounded,
-                      size: 44, color: AppColors.pine500),
+                  child: Icon(
+                    Icons.hotel_rounded,
+                    size: 44,
+                    color: AppColors.pine500,
+                  ),
                 ),
               ),
             ),
@@ -173,8 +177,11 @@ class HotelCard extends StatelessWidget {
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Icon(Icons.star_rounded,
-                        size: 13, color: AppColors.starGold),
+                    const Icon(
+                      Icons.star_rounded,
+                      size: 13,
+                      color: AppColors.starGold,
+                    ),
                     const SizedBox(width: 4),
                     Text(
                       '${item.rating} (${item.ratingCount} ulasan)',
@@ -190,22 +197,23 @@ class HotelCard extends StatelessWidget {
               ),
             ),
             // Kategori (kanan atas)
-            Positioned(
-              top: 12,
-              right: 12,
-              child: _Pill(
-                bg: AppColors.pine800,
-                child: Text(
-                  item.tag,
-                  style: const TextStyle(
-                    fontSize: 10.5,
-                    fontWeight: FontWeight.w700,
-                    color: AppColors.textOnPrimary,
-                    fontFamily: 'PlusJakartaSans',
+            if (item.tag.isNotEmpty)
+              Positioned(
+                top: 12,
+                right: 12,
+                child: _Pill(
+                  bg: AppColors.pine800,
+                  child: Text(
+                    item.tag,
+                    style: const TextStyle(
+                      fontSize: 10.5,
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.textOnPrimary,
+                      fontFamily: 'PlusJakartaSans',
+                    ),
                   ),
                 ),
               ),
-            ),
             // Lokasi (kiri bawah) + highlight (kanan bawah)
             Positioned(
               bottom: 12,
@@ -219,8 +227,11 @@ class HotelCard extends StatelessWidget {
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          const Icon(Icons.location_on_rounded,
-                              size: 12, color: AppColors.textOnPrimary),
+                          const Icon(
+                            Icons.location_on_rounded,
+                            size: 12,
+                            color: AppColors.textOnPrimary,
+                          ),
                           const SizedBox(width: 4),
                           Flexible(
                             child: Text(
